@@ -28,10 +28,10 @@ Implementation of HMAC SHA512 from https://github.com/dchest/tweetnacl-auth-js
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| message | <code>Uint8Array</code> | 
-| key | <code>Uint8Array</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| message | <code>Uint8Array</code> | message to HMAC |
+| key | <code>Uint8Array</code> | the HMAC key |
 
 <a name="getHKDF"></a>
 
@@ -65,10 +65,10 @@ Derives an Ed25519 keypair given a random seed and an optional HKDF salt.
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| seed | <code>Uint8Array</code> | 
-| [salt] | <code>Uint8Array</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| seed | <code>Uint8Array</code> | random seed, recommended length 32 |
+| [salt] | <code>Uint8Array</code> | random salt, recommended length 64 |
 
 <a name="uint8ToHex"></a>
 

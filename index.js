@@ -11,8 +11,8 @@ module.exports.DEFAULT_SEED_SIZE = DEFAULT_SEED_SIZE
 
 /**
  * Implementation of HMAC SHA512 from https://github.com/dchest/tweetnacl-auth-js
- * @param {Uint8Array} message
- * @param {Uint8Array} key
+ * @param {Uint8Array} message message to HMAC
+ * @param {Uint8Array} key the HMAC key
  * @returns {Uint8Array}
  */
 module.exports.hmac = function (message/* : Uint8Array */, key/* : Uint8Array */) {
@@ -105,8 +105,8 @@ module.exports.getSeed = function (size/* : number */ = DEFAULT_SEED_SIZE) {
 
 /**
  * Derives an Ed25519 keypair given a random seed and an optional HKDF salt.
- * @param {Uint8Array} seed
- * @param {Uint8Array=} salt
+ * @param {Uint8Array} seed random seed, recommended length 32
+ * @param {Uint8Array=} salt random salt, recommended length 64
  */
 module.exports.deriveSigningKeysFromSeed = function (seed/* : Uint8Array */, salt/* : Uint8Array */) {
   if (!(seed instanceof Uint8Array)) {
