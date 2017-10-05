@@ -105,8 +105,11 @@ module.exports.getSeed = function (size/* : number */ = DEFAULT_SEED_SIZE) {
 
 /**
  * Derives an Ed25519 keypair given a random seed and an optional HKDF salt.
+ * Returns a nacl.sign keypair object:
+ * https://github.com/dchest/tweetnacl-js#naclsignkeypair
  * @param {Uint8Array} seed random seed, recommended length 32
  * @param {Uint8Array=} salt random salt, recommended length 64
+ * @returns {{secretKey: Uint8Array, publicKey: Uint8Array}}
  */
 module.exports.deriveSigningKeysFromSeed = function (seed/* : Uint8Array */, salt/* : Uint8Array */) {
   if (!(seed instanceof Uint8Array)) {
