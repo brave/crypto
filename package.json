@@ -14,12 +14,12 @@
   "homepage": "http://www.github.com/brave/crypto",
   "main": "index.js",
   "devDependencies": {
-    "coveralls": "^2.11.15",
+    "coveralls": "^3.0.0",
     "flow-bin": "^0.35.0",
     "istanbul": "^0.4.5",
-    "jsdoc-to-markdown": "^2.0.1",
+    "jsdoc-to-markdown": "^3.0.0",
     "nsp": "^2.6.2",
-    "standard": "^8.1.0",
+    "standard": "^9.0.0",
     "tape": "^4.6.3"
   },
   "scripts": {
@@ -31,7 +31,9 @@
     "test": "tape test/**/*.js"
   },
   "standard": {
-    "ignore": ["test/indexTest.js"]
+    "ignore": [
+      "test/indexTest.js"
+    ]
   },
   "author": "yan <yan@brave.com",
   "repository": {
