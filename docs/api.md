@@ -10,8 +10,10 @@
 <dt><a href="#getSeed">getSeed([size])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Generates a random seed.</p>
 </dd>
-<dt><a href="#deriveSigningKeysFromSeed">deriveSigningKeysFromSeed(seed, [salt])</a></dt>
-<dd><p>Derives an Ed25519 keypair given a random seed and an optional HKDF salt.</p>
+<dt><a href="#deriveSigningKeysFromSeed">deriveSigningKeysFromSeed(seed, [salt])</a> ⇒ <code>Object</code></dt>
+<dd><p>Derives an Ed25519 keypair given a random seed and an optional HKDF salt.
+Returns a nacl.sign keypair object:
+<a href="https://github.com/dchest/tweetnacl-js#naclsignkeypair">https://github.com/dchest/tweetnacl-js#naclsignkeypair</a></p>
 </dd>
 <dt><a href="#uint8ToHex">uint8ToHex(arr)</a> ⇒ <code>string</code></dt>
 <dd><p>Converts Uint8Array or Buffer to a hex string.</p>
@@ -60,8 +62,10 @@ Generates a random seed.
 
 <a name="deriveSigningKeysFromSeed"></a>
 
-## deriveSigningKeysFromSeed(seed, [salt])
+## deriveSigningKeysFromSeed(seed, [salt]) ⇒ <code>Object</code>
 Derives an Ed25519 keypair given a random seed and an optional HKDF salt.
+Returns a nacl.sign keypair object:
+https://github.com/dchest/tweetnacl-js#naclsignkeypair
 
 **Kind**: global function  
 
