@@ -107,8 +107,9 @@ test('uint8ToHex', (t) => {
 })
 
 test('hexToUint8', (t) => {
-  t.plan(4)
+  t.plan(5)
   t.deepEqual(fromHex('00'), {0: 0})
+  t.deepEqual(fromHex('1'), {0: 1})
   t.deepEqual(fromHex(''), {})
   t.deepEqual(fromHex('00ff'), {0: 0, 1: 255})
   t.deepEqual(fromHex('1e010203'), {0: 30, 1: 1, 2: 2, 3: 3})
