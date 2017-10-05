@@ -77,9 +77,9 @@ Converts Uint8Array or Buffer to a hex string.
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| arr | <code>Uint8Array</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| arr | <code>Uint8Array</code> | Uint8Array / Buffer to convert |
 
 <a name="hexToUint8"></a>
 
@@ -88,7 +88,7 @@ Converts hex string to a Uint8Array.
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| [hex] | <code>string</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| [hex] | <code>string</code> | Hex string to convert; defaults to '' |
 
