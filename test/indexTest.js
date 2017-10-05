@@ -6,7 +6,8 @@ const toHex = crypto.uint8ToHex
 const fromHex = crypto.hexToUint8
 
 test('getSeed', (t) => {
-  t.plan(1)
+  t.plan(2)
+  t.equal(crypto.getSeed().length, 32)
   t.equal(crypto.getSeed(666).length, 666)
 })
 
