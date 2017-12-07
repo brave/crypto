@@ -123,7 +123,7 @@ module.exports.deriveSigningKeysFromSeed = function (seed/* : Uint8Array */, sal
 
 /**
  * Converts Uint8Array or Buffer to a hex string.
- * @param {Uint8Array} arr Uint8Array / Buffer to convert
+ * @param {Uint8Array|Buffer} arr Uint8Array / Buffer to convert
  * @returns {string}
  */
 module.exports.uint8ToHex = function (arr/* : Uint8Array | Buffer */) {
