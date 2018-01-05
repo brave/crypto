@@ -83,7 +83,7 @@ Converts Uint8Array or Buffer to a hex string.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| arr | <code>Uint8Array</code> | Uint8Array / Buffer to convert |
+| arr | <code>Uint8Array</code> \| <code>Buffer</code> | Uint8Array / Buffer to convert |
 
 <a name="hexToUint8"></a>
 
