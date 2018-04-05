@@ -42,6 +42,8 @@
   },
   "license": "MPL-2.0",
   "dependencies": {
+    "bip39": "^2.5.0",
+    "niceware": "^1.0.5",
     "tweetnacl": "^1.0.0"
   }
 }

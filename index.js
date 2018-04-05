@@ -3,6 +3,8 @@
 'use strict'
 
 const nacl = require('tweetnacl')
+const niceware = require('niceware')
+const bip39 = require('bip39')
 
 // Default size in bytes of random seed
 const DEFAULT_SEED_SIZE = 32
@@ -159,4 +161,74 @@ module.exports.hexToUint8 = function (hex/* : string */ = '') {
     arr[i] = Number('0x' + hex[2 * i] + hex[2 * i + 1])
   }
   return arr
+}
+
+/**
+ * Utilities for converting keys to passphrases using bip39 or niceware
+ * @module passphrase
+ */
+module.exports.passphrase = {
+  /**
+   * Converts bytes to passphrase using bip39 (default) or niceware
+   * @method
+   * @param {Uint8Array|Buffer|string} bytes Uint8Array / Buffer / hex to convert
+   * @param {boolean=} useNiceware Whether to use Niceware; defaults to false
+   * @returns {string}
+   */
+  fromBytesOrHex: function (bytes/* : Uint8Array | string */, useNiceware/* : boolean */ = false) {
+    if (useNiceware) {
+      if (typeof bytes === 'string') {
+        bytes = module.exports.hexToUint8(bytes)
+      }
+      return niceware.bytesToPassphrase(Buffer.from(bytes)).join(' ')
+    } else {
+      if (typeof bytes !== 'string') {
+        bytes = module.exports.uint8ToHex(bytes)
+      }
+      return bip39.entropyToMnemonic(bytes)
+    }
+  },
+
+  /**
+   * Converts a 32-byte passphrase to uint8array bytes. Infers whether the
+   * passphrase is bip39 or niceware based on length.
+   * @method
+   * @param {string} passphrase bip39/niceware phrase to convert
+   * @returns {Uint8Array}
+   */
+  toBytes32: function (passphrase/* : string */) {
+    passphrase = passphrase.trim().replace(/\s+/gi, ' ')
+    const words = passphrase.split(' ')
+    if (words.length === 16) {
+      // niceware
+      return new Uint8Array(niceware.passphraseToBytes(words))
+    } else if (words.length === 24) {
+      // bip39
+      return module.exports.hexToUint8(bip39.mnemonicToEntropy(passphrase))
+    } else {
+      throw new Error(`Input word length ${words.length} is not 24 or 16.`)
+    }
+  },
+
+  /**
+   * Converts a 32-byte passphrase to hex. Infers whether the
+   * passphrase is bip39 or niceware based on length.
+   * @method
+   * @param {string} passphrase bip39/niceware phrase to convert
+   * @returns {string}
+   */
+  toHex32: function (passphrase/* : string */) {
+    passphrase = passphrase.trim().replace(/\s+/gi, ' ')
+    const words = passphrase.split(' ')
+    if (words.length === 16) {
+      // niceware
+      const bytes = niceware.passphraseToBytes(words)
+      return module.exports.uint8ToHex(bytes)
+    } else if (words.length === 24) {
+      // bip39
+      return bip39.mnemonicToEntropy(passphrase)
+    } else {
+      throw new Error(`Input word length ${words.length} is not 24 or 16.`)
+    }
+  }
 }

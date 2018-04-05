@@ -1,3 +1,11 @@
+## Modules
+
+<dl>
+<dt><a href="#module_passphrase">passphrase</a></dt>
+<dd><p>Utilities for converting keys to passphrases using bip39 or niceware</p>
+</dd>
+</dl>
+
 ## Functions
 
 <dl>
@@ -22,6 +30,11 @@ Returns a nacl.sign keypair object:
 <dd><p>Converts hex string to a Uint8Array.</p>
 </dd>
 </dl>
+
+<a name="module_passphrase"></a>
+
+## passphrase
+Utilities for converting keys to passphrases using bip39 or niceware
 
 <a name="hmac"></a>
 
