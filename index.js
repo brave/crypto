@@ -165,9 +165,9 @@ module.exports.hexToUint8 = function (hex/* : string */ = '') {
 
 /**
  * Utilities for converting keys to passphrases using bip39 or niceware
- * @module passphrase
  */
 module.exports.passphrase = {
+  /* @exports passphrase */
   /**
    * Converts bytes to passphrase using bip39 (default) or niceware
    * @method
