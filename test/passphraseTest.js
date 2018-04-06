@@ -52,7 +52,9 @@ test('toBytes32', (t) => {
     new Uint8Array(array32))
   t.deepEqual(passphrase.toBytes32('zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote'),
     new Uint8Array(array32))
-  t.throws(passphrase.toBytes32.bind(null, 'zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong'), /length/, 'errors if input is unrecognized length')
+  t.throws(passphrase.toBytes32.bind(null, 'zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong'),
+    /words length/,
+    'errors if input is unrecognized length')
 })
 
 test('toHex32', (t) => {

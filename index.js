@@ -6,10 +6,13 @@ const nacl = require('tweetnacl')
 const niceware = require('niceware')
 const bip39 = require('bip39')
 
-// Default size in bytes of random seed
-const DEFAULT_SEED_SIZE = 32
-
-module.exports.DEFAULT_SEED_SIZE = DEFAULT_SEED_SIZE
+/**
+ * Default seed size in bytes.
+ * @const
+ * @type {number}
+ * @default
+ */
+module.exports.DEFAULT_SEED_SIZE = 32
 
 /**
  * Implementation of HMAC SHA512 from https://github.com/dchest/tweetnacl-auth-js
@@ -101,7 +104,7 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
  * @param {number=} size seed size in bytes; defaults to 32
  * @returns {Uint8Array}
  */
-module.exports.getSeed = function (size/* : number */ = DEFAULT_SEED_SIZE) {
+module.exports.getSeed = function (size/* : number */ = module.exports.DEFAULT_SEED_SIZE) {
   return nacl.randomBytes(size)
 }
 
@@ -199,14 +202,12 @@ module.exports.passphrase = {
   toBytes32: function (passphrase/* : string */) {
     passphrase = passphrase.trim().replace(/\s+/gi, ' ')
     const words = passphrase.split(' ')
-    if (words.length === 16) {
-      // niceware
+    if (words.length === module.exports.passphrase.NICEWARE_32_BYTE_WORD_COUNT) {
       return new Uint8Array(niceware.passphraseToBytes(words))
-    } else if (words.length === 24) {
-      // bip39
+    } else if (words.length === module.exports.passphrase.BIP39_32_BYTE_WORD_COUNT) {
       return module.exports.hexToUint8(bip39.mnemonicToEntropy(passphrase))
     } else {
-      throw new Error(`Input word length ${words.length} is not 24 or 16.`)
+      throw new Error(`Input words length ${words.length} is not 24 or 16.`)
     }
   },
 
@@ -220,15 +221,29 @@ module.exports.passphrase = {
   toHex32: function (passphrase/* : string */) {
     passphrase = passphrase.trim().replace(/\s+/gi, ' ')
     const words = passphrase.split(' ')
-    if (words.length === 16) {
-      // niceware
+    if (words.length === module.exports.passphrase.NICEWARE_32_BYTE_WORD_COUNT) {
       const bytes = niceware.passphraseToBytes(words)
       return module.exports.uint8ToHex(bytes)
-    } else if (words.length === 24) {
-      // bip39
+    } else if (words.length === module.exports.passphrase.BIP39_32_BYTE_WORD_COUNT) {
       return bip39.mnemonicToEntropy(passphrase)
     } else {
       throw new Error(`Input word length ${words.length} is not 24 or 16.`)
     }
-  }
+  },
+
+  /**
+   * Number of niceware words corresponding to 32 bytes
+   * @const
+   * @type {number}
+   * @default
+   */
+  NICEWARE_32_BYTE_WORD_COUNT: 16,
+
+  /**
+   * Number of niceware words corresponding to 32 bytes
+   * @const
+   * @type {number}
+   * @default
+   */
+  BIP39_32_BYTE_WORD_COUNT: 24
 }

@@ -6,6 +6,14 @@
 </dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#DEFAULT_SEED_SIZE">DEFAULT_SEED_SIZE</a> : <code>number</code></dt>
+<dd><p>Default seed size in bytes.</p>
+</dd>
+</dl>
+
 ## Functions
 
 <dl>
@@ -39,10 +47,26 @@ Utilities for converting keys to passphrases using bip39 or niceware
 **Kind**: global variable  
 
 * [passphrase](#passphrase)
+    * [.NICEWARE_32_BYTE_WORD_COUNT](#passphrase.NICEWARE_32_BYTE_WORD_COUNT) : <code>number</code>
+    * [.BIP39_32_BYTE_WORD_COUNT](#passphrase.BIP39_32_BYTE_WORD_COUNT) : <code>number</code>
     * [.fromBytesOrHex(bytes, [useNiceware])](#passphrase.fromBytesOrHex) ⇒ <code>string</code>
     * [.toBytes32(passphrase)](#passphrase.toBytes32) ⇒ <code>Uint8Array</code>
     * [.toHex32(passphrase)](#passphrase.toHex32) ⇒ <code>string</code>
 
+<a name="passphrase.NICEWARE_32_BYTE_WORD_COUNT"></a>
+
+### passphrase.NICEWARE_32_BYTE_WORD_COUNT : <code>number</code>
+Number of niceware words corresponding to 32 bytes
+
+**Kind**: static constant of [<code>passphrase</code>](#passphrase)  
+**Default**: <code>16</code>  
+<a name="passphrase.BIP39_32_BYTE_WORD_COUNT"></a>
+
+### passphrase.BIP39_32_BYTE_WORD_COUNT : <code>number</code>
+Number of niceware words corresponding to 32 bytes
+
+**Kind**: static constant of [<code>passphrase</code>](#passphrase)  
+**Default**: <code>24</code>  
 <a name="passphrase.fromBytesOrHex"></a>
 
 ### passphrase.fromBytesOrHex(bytes, [useNiceware]) ⇒ <code>string</code>
@@ -79,6 +103,13 @@ passphrase is bip39 or niceware based on length.
 | --- | --- | --- |
 | passphrase | <code>string</code> | bip39/niceware phrase to convert |
 
+<a name="DEFAULT_SEED_SIZE"></a>
+
+## DEFAULT_SEED_SIZE : <code>number</code>
+Default seed size in bytes.
+
+**Kind**: global constant  
+**Default**: <code>32</code>  
 <a name="hmac"></a>
 
 ## hmac(message, key) ⇒ <code>Uint8Array</code>
