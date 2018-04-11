@@ -166,6 +166,11 @@ module.exports.hexToUint8 = function (hex/* : string */ = '') {
   return arr
 }
 
+// For browserify
+if (typeof window === 'object') {
+  window.module = module
+}
+
 /**
  * Utilities for converting keys to passphrases using bip39 or niceware
  */

@@ -14,6 +14,7 @@
   "homepage": "http://www.github.com/brave/crypto",
   "main": "index.js",
   "devDependencies": {
+    "browserify": "^16.2.0",
     "coveralls": "^3.0.0",
     "flow-bin": "^0.39.0",
     "istanbul": "^0.4.5",
@@ -23,6 +24,7 @@
     "tape": "^4.9.0"
   },
   "scripts": {
+    "build": "browserify ./index.js -o browser/crypto.js",
     "check": "nsp check",
     "coverage": "istanbul cover tape test/**/*.js --report lcovonly -- -R spec",
     "lint": "standard",
