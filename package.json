@@ -23,6 +23,7 @@
     "tape": "^4.9.0"
   },
   "scripts": {
+    "build": "browserify ./index.js -o browser/crypto.js",
     "check": "nsp check",
     "coverage": "istanbul cover tape test/**/*.js --report lcovonly -- -R spec",
     "lint": "standard",
@@ -43,6 +44,7 @@
   "license": "MPL-2.0",
   "dependencies": {
     "bip39": "^2.5.0",
+    "browserify": "^16.1.1",
     "niceware": "^1.0.5",
     "tweetnacl": "^1.0.0"
   }
