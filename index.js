@@ -2,6 +2,7 @@
 
 'use strict'
 
+const assert = require('assert')
 const nacl = require('tweetnacl')
 const niceware = require('niceware')
 const bip39 = require('bip39')
@@ -87,9 +88,8 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
     t[i] = output
 
     let remaining = extractLen - filled
-    if (remaining === 0) {
-      return okm
-    } else if (output.length <= remaining) {
+    assert(remaining > 0)
+    if (output.length <= remaining) {
       okm.set(output, filled)
       filled = filled + output.length
     } else {
@@ -97,6 +97,8 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
       return okm
     }
   }
+
+  return okm
 }
 
 /**
