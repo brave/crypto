@@ -49,7 +49,7 @@ module.exports.hmac = function (message/* : Uint8Array */, key/* : Uint8Array */
  * Returns HKDF output according to rfc5869 using sha512
  * @param {Uint8Array} ikm input keying material
  * @param {Uint8Array} info context-specific info
- * @param {number} extractLength length of extracted output keying material in
+ * @param {number} extractLen length of extracted output keying material in
  *   octets
  * @param {Uint8Array=} salt optional salt
  * @returns {Uint8Array}
@@ -251,4 +251,26 @@ module.exports.passphrase = {
    * @default
    */
   BIP39_32_BYTE_WORD_COUNT: 24
+}
+
+/**
+ * Sample uniformly at random from nonnegative integers below a
+ * specified bound.
+ *
+ * @param {number} n - exclusive upper bound, positive integer at most 2^53
+ * @returns {number}
+ */
+module.exports.uniform = function (n/* : number */) {
+  if (typeof n !== 'number' || n % 1 !== 0 || n <= 0 || n > (2 ** 53)) {
+    throw new Error('Bound must be positive integer at most 2^53.')
+  }
+  const min = (2 ** 53) % n
+  let x
+  do {
+    const b = nacl.randomBytes(7)
+    const l32 = b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24)
+    const h21 = b[4] | (b[5] << 8) | ((b[6] & 0x1f) << 16)
+    x = (2 ** 32) * h21 + l32
+  } while (x < min)
+  return x % n
 }

@@ -20,7 +20,7 @@
 <dt><a href="#hmac">hmac(message, key)</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Implementation of HMAC SHA512 from <a href="https://github.com/dchest/tweetnacl-auth-js">https://github.com/dchest/tweetnacl-auth-js</a></p>
 </dd>
-<dt><a href="#getHKDF">getHKDF(ikm, info, extractLength, [salt])</a> ⇒ <code>Uint8Array</code></dt>
+<dt><a href="#getHKDF">getHKDF(ikm, info, extractLen, [salt])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Returns HKDF output according to rfc5869 using sha512</p>
 </dd>
 <dt><a href="#getSeed">getSeed([size])</a> ⇒ <code>Uint8Array</code></dt>
@@ -36,6 +36,10 @@ Returns a nacl.sign keypair object:
 </dd>
 <dt><a href="#hexToUint8">hexToUint8([hex])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Converts hex string to a Uint8Array.</p>
+</dd>
+<dt><a href="#uniform">uniform(n)</a> ⇒ <code>number</code></dt>
+<dd><p>Sample uniformly at random from nonnegative integers below a
+specified bound.</p>
 </dd>
 </dl>
 
@@ -124,7 +128,7 @@ Implementation of HMAC SHA512 from https://github.com/dchest/tweetnacl-auth-js
 
 <a name="getHKDF"></a>
 
-## getHKDF(ikm, info, extractLength, [salt]) ⇒ <code>Uint8Array</code>
+## getHKDF(ikm, info, extractLen, [salt]) ⇒ <code>Uint8Array</code>
 Returns HKDF output according to rfc5869 using sha512
 
 **Kind**: global function  
@@ -133,7 +137,7 @@ Returns HKDF output according to rfc5869 using sha512
 | --- | --- | --- |
 | ikm | <code>Uint8Array</code> | input keying material |
 | info | <code>Uint8Array</code> | context-specific info |
-| extractLength | <code>number</code> | length of extracted output keying material in   octets |
+| extractLen | <code>number</code> | length of extracted output keying material in   octets |
 | [salt] | <code>Uint8Array</code> | optional salt |
 
 <a name="getSeed"></a>
@@ -182,4 +186,16 @@ Converts hex string to a Uint8Array.
 | Param | Type | Description |
 | --- | --- | --- |
 | [hex] | <code>string</code> | Hex string to convert; defaults to '' |
+
+<a name="uniform"></a>
+
+## uniform(n) ⇒ <code>number</code>
+Sample uniformly at random from nonnegative integers below a
+specified bound.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| n | <code>number</code> | exclusive upper bound, positive integer at most 2^53 |
 
