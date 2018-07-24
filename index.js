@@ -169,6 +169,7 @@ module.exports.hexToUint8 = function (hex/* : string */ = '') {
 }
 
 // For browserify
+/* istanbul ignore if */
 if (typeof window === 'object') {
   window.module = module
 }
@@ -291,15 +292,20 @@ module.exports.uniform_01 = function () {
   // Draw an exponent with geometric distribution.
   let e = 0
   let x
-  while ((x = uniform32()) === 0) {
-    // emin = -1022; emin - 53 = -1054; emin - 64 = -1088 provides a
-    // hedge of paranoia in case I made a fencepost here.
-    if (e >= 1088) {
-      // You're struck by lightning, and you win the lottery...
-      // or your PRNG is broken.
-      return 0
-    }
-    e += 32
+  // One in four billion chance that uniform32() is zero.
+  /* istanbul ignore if */
+  if ((x = uniform32()) === 0) {
+    do {
+      // emin = -1022; emin - 53 = -1054; emin - 64 = -1088 provides a
+      // hedge of paranoia in case I made a fencepost here.
+      /* istanbul ignore if */
+      if (e >= 1088) {
+        // You're struck by lightning, and you win the lottery...
+        // or your PRNG is broken.
+        return 0
+      }
+      e += 32
+    } while ((x = uniform32()) === 0)
   }
   e += Math.clz32(x)
 
