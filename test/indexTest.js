@@ -110,22 +110,29 @@ test('hkdf', (t) => {
 })
 
 test('uint8ToHex', (t) => {
-  t.plan(6)
+  t.plan(8)
   t.equal(toHex(new Uint8Array([])), '')
   t.equal(toHex(new Uint8Array([0])), '00')
   t.equal(toHex(new Uint8Array([0, 255])), '00ff')
   t.equal(toHex(new Uint8Array([30, 1, 2, 3])), '1e010203')
+  const buf = new ArrayBuffer(6)
+  for (let i = 0; i < 6; i++) {
+    new Uint8Array(buf)[i] = [42, 30, 1, 2, 3, 73][i]
+  }
+  t.equal(toHex(new Uint8Array(buf, 1, 4)), '1e010203')
   t.equal(toHex(Buffer.from([30, 1, 2, 3])), '1e010203')
   t.equal(toHex(Buffer.alloc(3)), '000000')
+  t.throws(toHex.bind(null, 'foo'), /Uint8Array/, 'errors if inputs are wrong type')
 })
 
 test('hexToUint8', (t) => {
-  t.plan(5)
+  t.plan(6)
   t.deepEqual(fromHex('00'), {0: 0})
   t.deepEqual(fromHex('1'), {0: 1})
   t.deepEqual(fromHex(''), {})
   t.deepEqual(fromHex('00ff'), {0: 0, 1: 255})
   t.deepEqual(fromHex('1e010203'), {0: 30, 1: 1, 2: 2, 3: 3})
+  t.throws(fromHex.bind(null, new Uint8Array(3)), /string/, 'errors if inputs are wrong type')
 })
 
 test('key derivation', (t) => {
