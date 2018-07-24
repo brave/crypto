@@ -79,6 +79,12 @@ test('hkdf', (t) => {
     "L"     : 42,
     "OKM"   : "f5fa02b18298a72a8c23898a8703472c6eb179dc204c03425c970e3b164bf90fff22d04836d0e2343bac"
   }, {
+    "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+    "salt"  : "",
+    // "info"  : ...,       // This field intentionally blank.
+    "L"     : 42,
+    "OKM"   : "f5fa02b18298a72a8c23898a8703472c6eb179dc204c03425c970e3b164bf90fff22d04836d0e2343bac"
+  }, {
     "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b",
     "salt"  : "000102030405060708090a0b0c",
     "info"  : "f0f1f2f3f4f5f6f7f8f9",
@@ -90,11 +96,11 @@ test('hkdf', (t) => {
     "L"     : 42,
     "OKM"   : "1407d46013d98bc6decefcfee55f0f90b0c7f63d68eb1a80eaf07e953cfc0a3a5240a155d6e4daa965bb"
   }]
-  t.plan(7)
+  t.plan(8)
   results.forEach((result) => {
     var hkdf = crypto.getHKDF(
       fromHex(result['IKM']),
-      fromHex(result['info']),
+      'info' in result && fromHex(result['info']),
       result['L'],
       fromHex(result['salt'])
     )
