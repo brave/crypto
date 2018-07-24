@@ -4,6 +4,9 @@
 <dt><a href="#passphrase">passphrase</a></dt>
 <dd><p>Utilities for converting keys to passphrases using bip39 or niceware</p>
 </dd>
+<dt><a href="#random">random</a></dt>
+<dd><p>Random samplers.</p>
+</dd>
 </dl>
 
 ## Constants
@@ -36,13 +39,6 @@ Returns a nacl.sign keypair object:
 </dd>
 <dt><a href="#hexToUint8">hexToUint8([hex])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Converts hex string to a Uint8Array.</p>
-</dd>
-<dt><a href="#uniform">uniform(n)</a> ⇒ <code>number</code></dt>
-<dd><p>Sample uniformly at random from nonnegative integers below a
-specified bound.</p>
-</dd>
-<dt><a href="#uniform_01">uniform_01()</a> ⇒ <code>number</code></dt>
-<dd><p>Sample uniformly at random from floating-point numbers in [0, 1].</p>
 </dd>
 </dl>
 
@@ -110,6 +106,35 @@ passphrase is bip39 or niceware based on length.
 | --- | --- | --- |
 | passphrase | <code>string</code> | bip39/niceware phrase to convert |
 
+<a name="random"></a>
+
+## random
+Random samplers.
+
+**Kind**: global variable  
+
+* [random](#random)
+    * [.uniform(n)](#random.uniform) ⇒ <code>number</code>
+    * [.uniform_01()](#random.uniform_01) ⇒ <code>number</code>
+
+<a name="random.uniform"></a>
+
+### random.uniform(n) ⇒ <code>number</code>
+Sample uniformly at random from nonnegative integers below a
+specified bound.
+
+**Kind**: static method of [<code>random</code>](#random)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| n | <code>number</code> | exclusive upper bound, positive integer at most 2^53 |
+
+<a name="random.uniform_01"></a>
+
+### random.uniform_01() ⇒ <code>number</code>
+Sample uniformly at random from floating-point numbers in [0, 1].
+
+**Kind**: static method of [<code>random</code>](#random)  
 <a name="DEFAULT_SEED_SIZE"></a>
 
 ## DEFAULT_SEED_SIZE : <code>number</code>
@@ -190,21 +215,3 @@ Converts hex string to a Uint8Array.
 | --- | --- | --- |
 | [hex] | <code>string</code> | Hex string to convert; defaults to '' |
 
-<a name="uniform"></a>
-
-## uniform(n) ⇒ <code>number</code>
-Sample uniformly at random from nonnegative integers below a
-specified bound.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| n | <code>number</code> | exclusive upper bound, positive integer at most 2^53 |
-
-<a name="uniform_01"></a>
-
-## uniform_01() ⇒ <code>number</code>
-Sample uniformly at random from floating-point numbers in [0, 1].
-
-**Kind**: global function  
