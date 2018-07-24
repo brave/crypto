@@ -37,6 +37,10 @@ Returns a nacl.sign keypair object:
 <dt><a href="#hexToUint8">hexToUint8([hex])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Converts hex string to a Uint8Array.</p>
 </dd>
+<dt><a href="#uniform">uniform(n)</a> ⇒ <code>number</code></dt>
+<dd><p>Sample uniformly at random from nonnegative integers below a
+specified bound.</p>
+</dd>
 </dl>
 
 <a name="passphrase"></a>
@@ -182,4 +186,16 @@ Converts hex string to a Uint8Array.
 | Param | Type | Description |
 | --- | --- | --- |
 | [hex] | <code>string</code> | Hex string to convert; defaults to '' |
+
+<a name="uniform"></a>
+
+## uniform(n) ⇒ <code>number</code>
+Sample uniformly at random from nonnegative integers below a
+specified bound.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| n | <code>number</code> | exclusive upper bound, positive integer at most 2^53 |
 
