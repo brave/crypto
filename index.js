@@ -49,7 +49,7 @@ module.exports.hmac = function (message/* : Uint8Array */, key/* : Uint8Array */
  * Returns HKDF output according to rfc5869 using sha512
  * @param {Uint8Array} ikm input keying material
  * @param {Uint8Array} info context-specific info
- * @param {number} extractLength length of extracted output keying material in
+ * @param {number} extractLen length of extracted output keying material in
  *   octets
  * @param {Uint8Array=} salt optional salt
  * @returns {Uint8Array}
