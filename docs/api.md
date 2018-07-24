@@ -41,6 +41,9 @@ Returns a nacl.sign keypair object:
 <dd><p>Sample uniformly at random from nonnegative integers below a
 specified bound.</p>
 </dd>
+<dt><a href="#uniform_01">uniform_01()</a> ⇒ <code>number</code></dt>
+<dd><p>Sample uniformly at random from floating-point numbers in [0, 1].</p>
+</dd>
 </dl>
 
 <a name="passphrase"></a>
@@ -199,3 +202,9 @@ specified bound.
 | --- | --- | --- |
 | n | <code>number</code> | exclusive upper bound, positive integer at most 2^53 |
 
+<a name="uniform_01"></a>
+
+## uniform_01() ⇒ <code>number</code>
+Sample uniformly at random from floating-point numbers in [0, 1].
+
+**Kind**: global function  

@@ -219,3 +219,117 @@ test(`bits [45..53) of uniform(2**53) pass psi test for uniform distribution`, (
     return (0xff & Math.floor(crypto.uniform(2 ** 53) / (2 ** 45))) % DF
   })
 })
+
+// Like uniform_01, but limited to binary16 numbers with 11 bits of
+// precision.
+function uniform_01_lowprec () { // eslint-disable-line camelcase
+  function uniform16 () {
+    const b = nacl.randomBytes(2)
+    return (b[0] | (b[1] << 8)) >>> 0
+  }
+
+  // Draw an exponent with geometric distribution.  Here emin = -14,
+  // so 16 bits is plenty.
+  const e = Math.clz32(uniform16()) - 16
+
+  // Draw normal odd 16-bit significand with uniform distribution.
+  const s0 = (uniform16() | 0x8001) >>> 0
+
+  // Round to an 11-bit significand in [2^15, 2^16], yielding a
+  // significand that is a multiple of 2^(16 - 11) = 2^5.
+  const hack = 3 * (2 ** (16 - 11 + 53 - 2))
+  const s = (s0 + hack) - hack
+
+  // Scale into [1/2, 1] and apply the exponent.
+  return s * (2 ** (-16 - e))
+}
+
+// Like uniform_01, but with a bug: numbers <2^-11 excluded, as if you
+// used the naive approach for sampling IEEE 754-2008 binary16 numbers
+// in [0,1] that many people use for binary64 numbers.
+function baduniform_01_lowprec () { // eslint-disable-line camelcase
+  return crypto.uniform(2 ** 11) / (2 ** 11)
+}
+
+// Like uniform_01, but with a bug: wrong shift amount.
+function baduniform_01_badshift () { // eslint-disable-line camelcase
+  function uniform32 () {
+    const b = nacl.randomBytes(4)
+    return (b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 25)) >>> 0
+  }
+
+  // Draw an exponent with geometric distribution.
+  let e = 0
+  let x
+  while (e < 1088) {
+    if ((x = uniform32()) !== 0) {
+      break
+    }
+    e += 32
+  }
+  e += Math.clz32(x)
+
+  // Draw normal odd 64-bit significand with uniform distribution.
+  const hi = (uniform32() | 0x80000000) >>> 0
+  const lo = (uniform32() | 0x00000001) >>> 0
+
+  // Assemble parts into [2^63, 2^64) with uniform distribution.
+  // Using an odd low part breaks ties in the rounding, which should
+  // occur only in a set of measure zero.
+  const s = hi * (2 ** 32) + lo
+
+  // Scale into [1/2, 1) and apply the exponent.
+  return s * (2 ** (-64 - e))
+}
+
+function reject (x0, f) {
+  let x
+  do {
+    x = f()
+  } while (x === x0)
+  return x
+}
+
+// It had better appear uniformly distributed to psi.
+test('uniform_01() passes psi test for uniformly spaced buckets', (t) => {
+  psiTest(t, i => 1 / DF, () => {
+    return Math.floor(reject(1, crypto.uniform_01) * DF)
+  })
+})
+
+// Same is true for a low-precision variant.
+test('uniform_01_lowprec() passes psi test for uniformly spaced buckets', (t) => {
+  psiTest(t, i => 1 / DF, () => {
+    return Math.floor(reject(1, uniform_01_lowprec) * DF)
+  })
+})
+
+// However, a _bad_ low-precision variant should fail.
+test('baduniform_01_lowprec() fails psi test for uniformly spaced buckets', (t) => {
+  psiTestReject(t, i => 1 / DF, () => {
+    return Math.floor(reject(1, baduniform_01_lowprec) * DF)
+  })
+})
+
+// If we discard some bits of the full-precision uniform_01(), it
+// should continue to pass psi.
+test('(uniform_01()*64)%1 passes psi test for uniformly spaced buckets', (t) => {
+  psiTest(t, i => 1 / DF, () => {
+    return Math.floor(((reject(1, crypto.uniform_01) * 64) % 1) * DF)
+  })
+})
+
+// However, the low-precision variant doesn't have that luxury:
+// discard a few bits and it ceases to be uniform across 100 buckets.
+test('(uniform_01_lowprec()*64)%1 fails psi test for uniformly spaced buckets', (t) => {
+  psiTestReject(t, i => 1 / DF, () => {
+    return Math.floor(((reject(1, uniform_01_lowprec) * 64) % 1) * DF)
+  })
+})
+
+// Another pathology.
+test('baduniform_01_badshift() fails psi test for uniformly spaced buckets', (t) => {
+  psiTestReject(t, i => 1 / DF, () => {
+    return Math.floor(reject(1, baduniform_01_badshift) * DF)
+  })
+})
