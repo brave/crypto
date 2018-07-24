@@ -263,16 +263,16 @@ module.exports.passphrase = {
  * @returns {number}
  */
 module.exports.uniform = function (n/* : number */) {
-  if (typeof n !== 'number' || n % 1 !== 0 || n <= 0 || n > (2 ** 53)) {
+  if (typeof n !== 'number' || n % 1 !== 0 || n <= 0 || n > Math.pow(2, 53)) {
     throw new Error('Bound must be positive integer at most 2^53.')
   }
-  const min = (2 ** 53) % n
+  const min = Math.pow(2, 53) % n
   let x
   do {
     const b = nacl.randomBytes(7)
     const l32 = b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24)
     const h21 = b[4] | (b[5] << 8) | ((b[6] & 0x1f) << 16)
-    x = (2 ** 32) * h21 + l32
+    x = Math.pow(2, 32) * h21 + l32
   } while (x < min)
   return x % n
 }
@@ -310,8 +310,8 @@ module.exports.uniform_01 = function () {
   // Assemble parts into [2^63, 2^64] with uniform distribution.
   // Using an odd low part breaks ties in the rounding, which should
   // occur only in a set of measure zero.
-  const s = hi * (2 ** 32) + lo
+  const s = hi * Math.pow(2, 32) + lo
 
   // Scale into [1/2, 1] and apply the exponent.
-  return s * (2 ** (-64 - e))
+  return s * Math.pow(2, (-64 - e))
 }
