@@ -67,9 +67,21 @@ test('hkdf', (t) => {
     "L"     : 82,
     "OKM"   : "ce6c97192805b346e6161e821ed165673b84f400a2b514b2fe23d84cd189ddf1b695b48cbd1c8388441137b3ce28f16aa64ba33ba466b24df6cfcb021ecff235f6a2056ce3af1de44d572097a8505d9e7a93"
   }, {
+    "IKM"   : "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f",
+    "salt"  : "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "info"  : "b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+    "L"     : 64, // Same as above but truncated to a multiple of HMAC length.
+    "OKM"   : "ce6c97192805b346e6161e821ed165673b84f400a2b514b2fe23d84cd189ddf1b695b48cbd1c8388441137b3ce28f16aa64ba33ba466b24df6cfcb021ecff235"
+  }, {
     "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
     "salt"  : "",
     "info"  : "",
+    "L"     : 42,
+    "OKM"   : "f5fa02b18298a72a8c23898a8703472c6eb179dc204c03425c970e3b164bf90fff22d04836d0e2343bac"
+  }, {
+    "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+    "salt"  : "",
+    // "info"  : ...,       // This field intentionally blank.
     "L"     : 42,
     "OKM"   : "f5fa02b18298a72a8c23898a8703472c6eb179dc204c03425c970e3b164bf90fff22d04836d0e2343bac"
   }, {
@@ -84,11 +96,11 @@ test('hkdf', (t) => {
     "L"     : 42,
     "OKM"   : "1407d46013d98bc6decefcfee55f0f90b0c7f63d68eb1a80eaf07e953cfc0a3a5240a155d6e4daa965bb"
   }]
-  t.plan(6)
+  t.plan(8)
   results.forEach((result) => {
     var hkdf = crypto.getHKDF(
       fromHex(result['IKM']),
-      fromHex(result['info']),
+      'info' in result && fromHex(result['info']),
       result['L'],
       fromHex(result['salt'])
     )
@@ -98,22 +110,29 @@ test('hkdf', (t) => {
 })
 
 test('uint8ToHex', (t) => {
-  t.plan(6)
+  t.plan(8)
   t.equal(toHex(new Uint8Array([])), '')
   t.equal(toHex(new Uint8Array([0])), '00')
   t.equal(toHex(new Uint8Array([0, 255])), '00ff')
   t.equal(toHex(new Uint8Array([30, 1, 2, 3])), '1e010203')
+  const buf = new ArrayBuffer(6)
+  for (let i = 0; i < 6; i++) {
+    new Uint8Array(buf)[i] = [42, 30, 1, 2, 3, 73][i]
+  }
+  t.equal(toHex(new Uint8Array(buf, 1, 4)), '1e010203')
   t.equal(toHex(Buffer.from([30, 1, 2, 3])), '1e010203')
   t.equal(toHex(Buffer.alloc(3)), '000000')
+  t.throws(toHex.bind(null, 'foo'), /Uint8Array/, 'errors if inputs are wrong type')
 })
 
 test('hexToUint8', (t) => {
-  t.plan(5)
+  t.plan(6)
   t.deepEqual(fromHex('00'), {0: 0})
   t.deepEqual(fromHex('1'), {0: 1})
   t.deepEqual(fromHex(''), {})
   t.deepEqual(fromHex('00ff'), {0: 0, 1: 255})
   t.deepEqual(fromHex('1e010203'), {0: 30, 1: 1, 2: 2, 3: 3})
+  t.throws(fromHex.bind(null, new Uint8Array(3)), /string/, 'errors if inputs are wrong type')
 })
 
 test('key derivation', (t) => {

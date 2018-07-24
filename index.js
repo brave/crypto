@@ -2,6 +2,7 @@
 
 'use strict'
 
+const assert = require('assert')
 const nacl = require('tweetnacl')
 const niceware = require('niceware')
 const bip39 = require('bip39')
@@ -87,9 +88,8 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
     t[i] = output
 
     let remaining = extractLen - filled
-    if (remaining === 0) {
-      return okm
-    } else if (output.length <= remaining) {
+    assert(remaining > 0)
+    if (output.length <= remaining) {
       okm.set(output, filled)
       filled = filled + output.length
     } else {
@@ -97,6 +97,8 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
       return okm
     }
   }
+
+  return okm
 }
 
 /**
@@ -167,6 +169,7 @@ module.exports.hexToUint8 = function (hex/* : string */ = '') {
 }
 
 // For browserify
+/* istanbul ignore if */
 if (typeof window === 'object') {
   window.module = module
 }
@@ -261,16 +264,16 @@ module.exports.passphrase = {
  * @returns {number}
  */
 module.exports.uniform = function (n/* : number */) {
-  if (typeof n !== 'number' || n % 1 !== 0 || n <= 0 || n > (2 ** 53)) {
+  if (typeof n !== 'number' || n % 1 !== 0 || n <= 0 || n > Math.pow(2, 53)) {
     throw new Error('Bound must be positive integer at most 2^53.')
   }
-  const min = (2 ** 53) % n
+  const min = Math.pow(2, 53) % n
   let x
   do {
     const b = nacl.randomBytes(7)
     const l32 = b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24)
     const h21 = b[4] | (b[5] << 8) | ((b[6] & 0x1f) << 16)
-    x = (2 ** 32) * h21 + l32
+    x = Math.pow(2, 32) * h21 + l32
   } while (x < min)
   return x % n
 }
@@ -289,15 +292,20 @@ module.exports.uniform_01 = function () {
   // Draw an exponent with geometric distribution.
   let e = 0
   let x
-  while ((x = uniform32()) === 0) {
-    // emin = -1022; emin - 53 = -1054; emin - 64 = -1088 provides a
-    // hedge of paranoia in case I made a fencepost here.
-    if (e >= 1088) {
-      // You're struck by lightning, and you win the lottery...
-      // or your PRNG is broken.
-      return 0
-    }
-    e += 32
+  // One in four billion chance that uniform32() is zero.
+  /* istanbul ignore if */
+  if ((x = uniform32()) === 0) {
+    do {
+      // emin = -1022; emin - 53 = -1054; emin - 64 = -1088 provides a
+      // hedge of paranoia in case I made a fencepost here.
+      /* istanbul ignore if */
+      if (e >= 1088) {
+        // You're struck by lightning, and you win the lottery...
+        // or your PRNG is broken.
+        return 0
+      }
+      e += 32
+    } while ((x = uniform32()) === 0)
   }
   e += Math.clz32(x)
 
@@ -308,8 +316,8 @@ module.exports.uniform_01 = function () {
   // Assemble parts into [2^63, 2^64] with uniform distribution.
   // Using an odd low part breaks ties in the rounding, which should
   // occur only in a set of measure zero.
-  const s = hi * (2 ** 32) + lo
+  const s = hi * Math.pow(2, 32) + lo
 
   // Scale into [1/2, 1] and apply the exponent.
-  return s * (2 ** (-64 - e))
+  return s * Math.pow(2, (-64 - e))
 }
