@@ -144,53 +144,53 @@ const ERRPAT = /Bound must be positive integer at most 2\^53\./
 
 test('uniform() throws', (t) => {
   t.plan(1)
-  t.throws(() => crypto.uniform(), ERRPAT)
+  t.throws(() => crypto.random.uniform(), ERRPAT)
 })
 
 test("uniform('foo') throws", (t) => {
   t.plan(1)
-  t.throws(() => crypto.uniform('foo'), ERRPAT)
+  t.throws(() => crypto.random.uniform('foo'), ERRPAT)
 })
 
 test('uniform(0) throws', (t) => {
   t.plan(1)
-  t.throws(() => crypto.uniform(0), ERRPAT)
+  t.throws(() => crypto.random.uniform(0), ERRPAT)
 })
 
 test('uniform(0.5) throws', (t) => {
   t.plan(1)
-  t.throws(() => crypto.uniform(0.5), ERRPAT)
+  t.throws(() => crypto.random.uniform(0.5), ERRPAT)
 })
 
 // round(2**53 + 1) = 2**53, but round(2**53 + 2) > 2**53
 test('uniform(2**53 + 2) throws', (t) => {
   t.plan(1)
-  t.throws(() => crypto.uniform((2 ** 53) + 2), ERRPAT)
+  t.throws(() => crypto.random.uniform((2 ** 53) + 2), ERRPAT)
 })
 
 test('uniform(1) yields 0', (t) => {
   t.plan(1)
-  t.equal(0, crypto.uniform(1))
+  t.equal(0, crypto.random.uniform(1))
 })
 
 test('uniform(2**53) does not throw', (t) => {
   t.plan(1)
-  t.doesNotThrow(() => crypto.uniform(2 ** 53))
+  t.doesNotThrow(() => crypto.random.uniform(2 ** 53))
 })
 
 test('uniform(DF) passes psi test for uniform distribution', (t) => {
-  psiTest(t, i => 1 / DF, () => crypto.uniform(DF))
+  psiTest(t, i => 1 / DF, () => crypto.random.uniform(DF))
 })
 
 // Empirically confirm that the psi test has enough statistical power
 // to detect modulo bias in the above test.
 test('uniform(2*DF + 1) % DF fails psi test for uniform distribution', (t) => {
-  psiTestReject(t, i => 1 / DF, () => crypto.uniform((2 * DF) + 1) % DF)
+  psiTestReject(t, i => 1 / DF, () => crypto.random.uniform((2 * DF) + 1) % DF)
 })
 
 test('uniform(256) % DF passes psi test for modulo bias', (t) => {
   psiTest(t, i => (Math.floor(256 / DF) + (i < 256 % DF)) / 256, () => {
-    return crypto.uniform(256) % DF
+    return crypto.random.uniform(256) % DF
   })
 })
 
@@ -209,14 +209,15 @@ test('bits [24..32) of bad uniform fail psi test for uniform distribution', (t) 
 for (let b = 0; b < 53 - 8; b += 8) {
   test(`bits [${b}..${b + 8}) of uniform(2**53) pass psi test for uniform distribution`, (t) => {
     psiTest(t, i => (Math.floor(256 / DF) + (i < 256 % DF)) / 256, () => {
-      return (0xff & Math.floor(crypto.uniform(2 ** 53) / (2 ** b))) % DF
+      const x = crypto.random.uniform(2 ** 53)
+      return (0xff & Math.floor(x / (2 ** b))) % DF
     })
   })
 }
 
 test(`bits [45..53) of uniform(2**53) pass psi test for uniform distribution`, (t) => {
   psiTest(t, i => (Math.floor(256 / DF) + (i < 256 % DF)) / 256, () => {
-    return (0xff & Math.floor(crypto.uniform(2 ** 53) / (2 ** 45))) % DF
+    return (0xff & Math.floor(crypto.random.uniform(2 ** 53) / (2 ** 45))) % DF
   })
 })
 
@@ -248,7 +249,7 @@ function uniform_01_lowprec () { // eslint-disable-line camelcase
 // used the naive approach for sampling IEEE 754-2008 binary16 numbers
 // in [0,1] that many people use for binary64 numbers.
 function baduniform_01_lowprec () { // eslint-disable-line camelcase
-  return crypto.uniform(2 ** 11) / (2 ** 11)
+  return crypto.random.uniform(2 ** 11) / (2 ** 11)
 }
 
 // Like uniform_01, but with a bug: wrong shift amount.
@@ -293,7 +294,7 @@ function reject (x0, f) {
 // It had better appear uniformly distributed to psi.
 test('uniform_01() passes psi test for uniformly spaced buckets', (t) => {
   psiTest(t, i => 1 / DF, () => {
-    return Math.floor(reject(1, crypto.uniform_01) * DF)
+    return Math.floor(reject(1, crypto.random.uniform_01) * DF)
   })
 })
 
@@ -315,7 +316,7 @@ test('baduniform_01_lowprec() fails psi test for uniformly spaced buckets', (t) 
 // should continue to pass psi.
 test('(uniform_01()*64)%1 passes psi test for uniformly spaced buckets', (t) => {
   psiTest(t, i => 1 / DF, () => {
-    return Math.floor(((reject(1, crypto.uniform_01) * 64) % 1) * DF)
+    return Math.floor(((reject(1, crypto.random.uniform_01) * 64) % 1) * DF)
   })
 })
 
