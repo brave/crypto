@@ -221,37 +221,6 @@ test(`bits [45..53) of uniform(2**53) pass psi test for uniform distribution`, (
   })
 })
 
-// Like uniform_01, but limited to binary16 numbers with 11 bits of
-// precision.
-function uniform_01_lowprec () { // eslint-disable-line camelcase
-  function uniform16 () {
-    const b = nacl.randomBytes(2)
-    return (b[0] | (b[1] << 8)) >>> 0
-  }
-
-  // Draw an exponent with geometric distribution.  Here emin = -14,
-  // so 16 bits is plenty.
-  const e = Math.clz32(uniform16()) - 16
-
-  // Draw normal odd 16-bit significand with uniform distribution.
-  const s0 = (uniform16() | 0x8001) >>> 0
-
-  // Round to an 11-bit significand in [2^15, 2^16], yielding a
-  // significand that is a multiple of 2^(16 - 11) = 2^5.
-  const hack = 3 * (2 ** (16 - 11 + 53 - 2))
-  const s = (s0 + hack) - hack
-
-  // Scale into [1/2, 1] and apply the exponent.
-  return s * (2 ** (-16 - e))
-}
-
-// Like uniform_01, but with a bug: numbers <2^-11 excluded, as if you
-// used the naive approach for sampling IEEE 754-2008 binary16 numbers
-// in [0,1] that many people use for binary64 numbers.
-function baduniform_01_lowprec () { // eslint-disable-line camelcase
-  return crypto.random.uniform(2 ** 11) / (2 ** 11)
-}
-
 // Like uniform_01, but with a bug: wrong shift amount.
 function baduniform_01_badshift () { // eslint-disable-line camelcase
   function uniform32 () {
@@ -291,24 +260,12 @@ function reject (x0, f) {
   return x
 }
 
-// It had better appear uniformly distributed to psi.
+// It had better appear uniformly distributed to psi.  The
+// distribution is not exact, but the error of each bucket's
+// probability from 1/DF is so small it is insignificant here.
 test('uniform_01() passes psi test for uniformly spaced buckets', (t) => {
   psiTest(t, i => 1 / DF, () => {
     return Math.floor(reject(1, crypto.random.uniform_01) * DF)
-  })
-})
-
-// Same is true for a low-precision variant.
-test('uniform_01_lowprec() passes psi test for uniformly spaced buckets', (t) => {
-  psiTest(t, i => 1 / DF, () => {
-    return Math.floor(reject(1, uniform_01_lowprec) * DF)
-  })
-})
-
-// However, a _bad_ low-precision variant should fail.
-test('baduniform_01_lowprec() fails psi test for uniformly spaced buckets', (t) => {
-  psiTestReject(t, i => 1 / DF, () => {
-    return Math.floor(reject(1, baduniform_01_lowprec) * DF)
   })
 })
 
@@ -317,14 +274,6 @@ test('baduniform_01_lowprec() fails psi test for uniformly spaced buckets', (t) 
 test('(uniform_01()*64)%1 passes psi test for uniformly spaced buckets', (t) => {
   psiTest(t, i => 1 / DF, () => {
     return Math.floor(((reject(1, crypto.random.uniform_01) * 64) % 1) * DF)
-  })
-})
-
-// However, the low-precision variant doesn't have that luxury:
-// discard a few bits and it ceases to be uniform across 100 buckets.
-test('(uniform_01_lowprec()*64)%1 fails psi test for uniformly spaced buckets', (t) => {
-  psiTestReject(t, i => 1 / DF, () => {
-    return Math.floor(((reject(1, uniform_01_lowprec) * 64) % 1) * DF)
   })
 })
 
