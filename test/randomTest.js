@@ -68,15 +68,15 @@ const CHI2_CRITICAL = 135.807
 const NPASSES_MIN = 1
 const NTRIALS = 2
 
-function trials (t, name, f) {
+function trials (t, name, ntrials, npassesMin, f) {
   let npass = 0
   let trial
-  for (trial = 0; npass < NPASSES_MIN && trial < NTRIALS; trial++) {
+  for (trial = 0; npass < npassesMin && trial < ntrials; trial++) {
     if (f()) {
       npass++
     }
   }
-  t.ok(npass >= NPASSES_MIN, `${npass} of ${trial} ${name} trials`)
+  t.ok(npass >= npassesMin, `${npass} of ${trial} ${name} trials`)
 }
 
 function psi (C, P, n) {
@@ -100,7 +100,7 @@ function psiTest (t, probability, sample) {
   for (let i = 0; i < DF; i++) {
     P[i] = probability(i)
   }
-  trials(t, 'psi', () => {
+  trials(t, 'psi', NTRIALS, NPASSES_MIN, () => {
     const C = new Uint32Array(DF) // count
     for (let s = 0; s < NSAMPLES; s++) {
       C[sample()]++
@@ -115,7 +115,7 @@ function psiTestReject (t, probability, sample) {
   for (let i = 0; i < DF; i++) {
     P[i] = probability(i)
   }
-  trials(t, 'psi reject', () => {
+  trials(t, 'psi reject', NTRIALS, NTRIALS - NPASSES_MIN + 1, () => {
     const C = new Uint32Array(DF) // count
     for (let s = 0; s < NSAMPLES; s++) {
       C[sample()]++
