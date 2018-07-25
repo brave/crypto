@@ -221,6 +221,38 @@ test(`bits [45..53) of uniform(2**53) pass psi test for uniform distribution`, (
   })
 })
 
+// Like uniform_01, but limited to binary16 numbers with 11 bits of
+// precision.
+function uniform_01_lowprec () { // eslint-disable-line camelcase
+  function uniform16 () {
+    const b = nacl.randomBytes(2)
+    return (b[0] | (b[1] << 8)) >>> 0
+  }
+
+  // Draw an exponent with geometric distribution.  Here emin = -14,
+  // so 16 bits is plenty.
+  const e = Math.clz32(uniform16()) - 16
+
+  // Draw normal odd 16-bit significand with uniform distribution.
+  const s0 = (uniform16() | 0x8001) >>> 0
+
+  // Round to an 11-bit significand in [2^15, 2^16], yielding a
+  // significand that is a multiple of 2^(16 - 11) = 2^5.
+  const hack = 3 * (2 ** (16 - 11 + 53 - 2))
+  const s = (s0 + hack) - hack
+
+  // Scale into [1/2, 1] and apply the exponent.
+  return s * (2 ** (-16 - e))
+}
+
+// Like uniform_01_lowprec, but with a bug: numbers <2^-11 excluded,
+// as if you used the naive approach for sampling IEEE 754-2008
+// binary16 numbers in [0,1] that many people use for binary64
+// numbers.
+function baduniform_01_lowprec () { // eslint-disable-line camelcase
+  return crypto.random.uniform(2 ** 11) / (2 ** 11)
+}
+
 // Like uniform_01, but with a bug: wrong shift amount.
 function baduniform_01_badshift () { // eslint-disable-line camelcase
   function uniform32 () {
@@ -266,6 +298,118 @@ function reject (x0, f) {
 test('uniform_01() passes psi test for uniformly spaced buckets', (t) => {
   psiTest(t, i => 1 / DF, () => {
     return Math.floor(reject(1, crypto.random.uniform_01) * DF)
+  })
+})
+
+// dist16[i] = Pr[i/100 <= min(fp16(U), 99) < (i + 1)/100], where
+// fp16(U) is the standard rounding to a binary16 floating-point
+// number of a uniform random real in [0,1].
+const dist16 = [
+  9.993438720703124e-3, 9.993438720703124e-3,
+  0.0100048828125, 0.00998199462890625,
+  0.0100048828125, 0.0100048828125,
+  0.0099591064453125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.009913330078125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.00994384765625, 0.0098828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0100048828125,
+  0.0100048828125, 0.0098828125,
+  0.0098828125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.010126953125, 0.0098828125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.010126953125,
+  0.0098828125, 0.01037109375
+]
+
+// The low-precision variant had better appear uniformly distributed
+// to psi, at least as uniform as binary16 floating-point arithmetic
+// can be, which is nonuniform enough we need to compute it more
+// precisely in the dist16 table.
+test('uniform_01_lowprec() passes psi test for uniformly spaced buckets', (t) => {
+  psiTest(t, i => dist16[i], () => {
+    const x = uniform_01_lowprec()
+    for (let i = 0; i < DF; i++) {
+      if (x < (i + 1) / DF) {
+        return i
+      }
+    }
+    assert(x === 1)
+    return DF - 1
+  })
+})
+
+// Test that in 100000 samples we get at least one nonzero sample
+// below 2^-11 is somewhere between 2^-11 and 2^-12, say 2^-12 to be
+// conservative; the probability of a sample failing this criterion is
+// then at most 1 - 2^-12; the probability of _all_ samples failing
+// this criterion, i.e. a spurious failure of the test, is at most
+//
+//      (1 - 2^-12)^100000 ~= 2 * 10^-11 < 10^-10.
+//
+// This is not zero, but it's close enough for a test suite like this,
+// and far below the spurious failure probability of 0.0001 for other
+// tests here!
+test('uniform_01_lowprec() passes small number test', (t) => {
+  t.plan(1)
+  trials(t, 'small number', NTRIALS, NPASSES_MIN, () => {
+    for (let i = 0; i < NSAMPLES; i++) {
+      const x = uniform_01_lowprec()
+      if (x > 0 && x < 2 ** -11) {
+        return true
+      }
+    }
+    return false
+  })
+})
+
+// baduniform_01_lowprec() may return 0, but it will never return
+// anything 0 < x < 2^-11.
+test('baduniform_01_lowprec() fails small number test', (t) => {
+  t.plan(1)
+  trials(t, 'small number', NTRIALS, NTRIALS - NPASSES_MIN + 1, () => {
+    for (let i = 0; i < NSAMPLES; i++) {
+      const x = baduniform_01_lowprec()
+      if (x > 0 && x < 2 ** -11) {
+        return false
+      }
+    }
+    return true
   })
 })
 
