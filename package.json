@@ -18,7 +18,6 @@
     "coveralls": "^3.0.0",
     "flow-bin": "^0.39.0",
     "istanbul": "^0.4.5",
-    "jsdoc-to-markdown": "^4.0.1",
     "standard": "^11.0.1",
     "tape": "^4.9.0"
   },
@@ -27,7 +26,6 @@
     "check": "npm audit",
     "coverage": "istanbul cover tape test/**/*.js --report lcovonly -- -R spec",
     "lint": "standard",
-    "jsdoc": "jsdoc2md index.js > docs/api.md",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "test": "tape test/**/*.js"
   },
