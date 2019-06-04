@@ -58,14 +58,14 @@ Utilities for converting keys to passphrases using bip39 or niceware
 
 <a name="passphrase.NICEWARE_32_BYTE_WORD_COUNT"></a>
 
-### passphrase.NICEWARE_32_BYTE_WORD_COUNT : <code>number</code>
+### passphrase.NICEWARE\_32\_BYTE\_WORD\_COUNT : <code>number</code>
 Number of niceware words corresponding to 32 bytes
 
 **Kind**: static constant of [<code>passphrase</code>](#passphrase)  
 **Default**: <code>16</code>  
 <a name="passphrase.BIP39_32_BYTE_WORD_COUNT"></a>
 
-### passphrase.BIP39_32_BYTE_WORD_COUNT : <code>number</code>
+### passphrase.BIP39\_32\_BYTE\_WORD\_COUNT : <code>number</code>
 Number of niceware words corresponding to 32 bytes
 
 **Kind**: static constant of [<code>passphrase</code>](#passphrase)  
@@ -131,13 +131,13 @@ specified bound.
 
 <a name="random.uniform_01"></a>
 
-### random.uniform_01() ⇒ <code>number</code>
+### random.uniform\_01() ⇒ <code>number</code>
 Sample uniformly at random from floating-point numbers in [0, 1].
 
 **Kind**: static method of [<code>random</code>](#random)  
 <a name="DEFAULT_SEED_SIZE"></a>
 
-## DEFAULT_SEED_SIZE : <code>number</code>
+## DEFAULT\_SEED\_SIZE : <code>number</code>
 Default seed size in bytes.
 
 **Kind**: global constant  
