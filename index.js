@@ -79,15 +79,15 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
 
   let filled = 0
   for (var i = 1; i <= n; i++) {
-    let prev = t[i - 1]
-    let input = new Uint8Array(info.length + prev.length + 1)
+    const prev = t[i - 1]
+    const input = new Uint8Array(info.length + prev.length + 1)
     input.set(prev)
     input.set(info, prev.length)
     input.set(new Uint8Array([i]), prev.length + info.length)
-    let output = module.exports.hmac(input, prk)
+    const output = module.exports.hmac(input, prk)
     t[i] = output
 
-    let remaining = extractLen - filled
+    const remaining = extractLen - filled
     assert(remaining > 0)
     if (output.length <= remaining) {
       okm.set(output, filled)
