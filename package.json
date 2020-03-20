@@ -16,7 +16,6 @@
   "devDependencies": {
     "browserify": "^16.5.0",
     "coveralls": "^3.0.9",
-    "flow-bin": "^0.39.0",
     "optional-dev-dependency": "^2.0.1",
     "standard": "^14.3.3",
     "tape": "^4.9.0"
@@ -25,21 +24,14 @@
     "jsdoc-to-markdown": [
       "^5.0.0",
       "jsdoc"
-    ],
-    "istanbul": [
-      "^0.4.5",
-      "istanbul"
     ]
   },
   "scripts": {
     "build": "browserify ./index.js -o browser/crypto.js",
     "check": "npm audit",
-    "precoverage": "optional-dev-dependency -t istanbul",
-    "coverage": "istanbul cover tape test/**/*.js --report lcovonly -- -R spec",
     "lint": "standard",
     "prejsdoc": "optional-dev-dependency -t jsdoc",
     "jsdoc": "jsdoc2md index.js > docs/api.md",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "test": "tape test/**/*.js"
   },
   "standard": {
