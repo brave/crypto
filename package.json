@@ -14,37 +14,29 @@
   "homepage": "http://www.github.com/brave/crypto",
   "main": "index.js",
   "devDependencies": {
-    "browserify": "^16.2.3",
-    "coveralls": "^3.0.0",
-    "flow-bin": "^0.39.0",
+    "browserify": "^16.5.0",
+    "coveralls": "^3.0.9",
     "optional-dev-dependency": "^2.0.1",
-    "standard": "^11.0.1",
+    "standard": "^14.3.3",
     "tape": "^4.9.0"
   },
   "optionalDevDependencies": {
     "jsdoc-to-markdown": [
       "^5.0.0",
       "jsdoc"
-    ],
-    "istanbul": [
-      "^0.4.5",
-      "istanbul"
     ]
   },
   "scripts": {
     "build": "browserify ./index.js -o browser/crypto.js",
     "check": "npm audit",
-    "precoverage": "optional-dev-dependency -t istanbul",
-    "coverage": "istanbul cover tape test/**/*.js --report lcovonly -- -R spec",
     "lint": "standard",
     "prejsdoc": "optional-dev-dependency -t jsdoc",
     "jsdoc": "jsdoc2md index.js > docs/api.md",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "test": "tape test/**/*.js"
   },
   "standard": {
     "ignore": [
-      "test/indexTest.js"
+      "test/*.js"
     ]
   },
   "author": "yan <yan@brave.com",
@@ -54,8 +46,8 @@
   },
   "license": "MPL-2.0",
   "dependencies": {
-    "bip39": "^2.5.0",
-    "niceware": "^1.0.5",
-    "tweetnacl": "^1.0.0"
+    "bip39": "^2.6.0",
+    "niceware": "^1.0.7",
+    "tweetnacl": "^1.0.3"
   }
 }

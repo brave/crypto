@@ -143,7 +143,8 @@ test('key derivation', (t) => {
   t.equal('b5abda6940984c5153a2ba3653f047f98dfb19e39c3e02f07c8bbb0bd8e8872ef58ca446f0c33ee7e8e9874466da442b2e764afd77ad46034bdff9e01f9b87d4', toHex(key.secretKey), 'gets priv key')
   const message = Buffer.from('€ 123 ッッッ　あ')
   const signed = nacl.sign(message, key.secretKey)
-  t.deepEqual(nacl.sign.open(signed, key.publicKey), message, 'verification success')
+  const opened = Buffer.from(nacl.sign.open(signed, key.publicKey))
+  t.deepEqual(opened, message, 'verification success')
   signed[0] = 255
   t.deepEqual(nacl.sign.open(signed, key.publicKey), null, 'verification failure')
   t.throws(crypto.deriveSigningKeysFromSeed.bind(null, []), /Uint8Array/, 'error when input is not a Uint8Array')
