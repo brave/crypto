@@ -126,13 +126,16 @@ test('uint8ToHex', (t) => {
 })
 
 test('hexToUint8', (t) => {
-  t.plan(6)
+  t.plan(9)
   t.deepEqual(fromHex('00'), {0: 0})
   t.deepEqual(fromHex('1'), {0: 1})
   t.deepEqual(fromHex(''), {})
   t.deepEqual(fromHex('00ff'), {0: 0, 1: 255})
   t.deepEqual(fromHex('1e010203'), {0: 30, 1: 1, 2: 2, 3: 3})
-  t.throws(fromHex.bind(null, new Uint8Array(3)), /string/, 'errors if inputs are wrong type')
+  t.deepEqual(fromHex('1E010203'), {0: 30, 1: 1, 2: 2, 3: 3})
+  t.throws(fromHex.bind(null, new Uint8Array(3)), /must be a string/, 'errors if inputs are wrong type')
+  t.throws(fromHex.bind(null, '1e010203g'), /must be hex/, 'errors if input is not hex')
+  t.throws(fromHex.bind(null, '0x1ffb78'), /without the 0x prefix/, 'errors if input has 0x prefix')
 })
 
 test('key derivation', (t) => {
