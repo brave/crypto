@@ -79,7 +79,7 @@ Converts bytes to passphrase using bip39 (default) or niceware
 
 | Param | Type | Description |
 | --- | --- | --- |
-| bytes | <code>Uint8Array</code> \| <code>Buffer</code> \| <code>string</code> | Uint8Array / Buffer / hex to convert |
+| bytes | <code>Uint8Array</code> \| <code>Buffer</code> \| <code>string</code> | Uint8Array / Buffer / hex string to convert; hex should not contain 0x prefix. |
 | [useNiceware] | <code>boolean</code> | Whether to use Niceware; defaults to false |
 
 <a name="passphrase.toBytes32"></a>
@@ -213,5 +213,5 @@ Converts hex string to a Uint8Array.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [hex] | <code>string</code> | Hex string to convert; defaults to '' |
+| [hex] | <code>string</code> | Hex string to convert; defaults to ''. |
 

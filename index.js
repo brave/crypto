@@ -151,12 +151,15 @@ module.exports.uint8ToHex = function (arr/* : Uint8Array | Buffer */) {
 
 /**
  * Converts hex string to a Uint8Array.
- * @param {string=} hex Hex string to convert; defaults to ''
+ * @param {string=} hex Hex string to convert; defaults to ''.
  * @returns {Uint8Array}
  */
 module.exports.hexToUint8 = function (hex/* : string */ = '') {
   if (typeof hex !== 'string') {
     throw new Error('Input must be a string')
+  }
+  if (!/^[0-9A-Fa-f]*$/.test(hex)) {
+    throw new Error('Input must be hex without the 0x prefix')
   }
   if (hex.length % 2 !== 0) {
     hex = '0' + hex
@@ -182,7 +185,7 @@ module.exports.passphrase = {
   /**
    * Converts bytes to passphrase using bip39 (default) or niceware
    * @method
-   * @param {Uint8Array|Buffer|string} bytes Uint8Array / Buffer / hex to convert
+   * @param {Uint8Array|Buffer|string} bytes Uint8Array / Buffer / hex string to convert; hex should not contain 0x prefix.
    * @param {boolean=} useNiceware Whether to use Niceware; defaults to false
    * @returns {string}
    */
