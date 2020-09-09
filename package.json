@@ -16,21 +16,14 @@
   "devDependencies": {
     "browserify": "^16.5.0",
     "coveralls": "^3.0.9",
-    "optional-dev-dependency": "^2.0.1",
+    "jsdoc-to-markdown": "^6.0.1",
     "standard": "^14.3.3",
     "tape": "^4.9.0"
-  },
-  "optionalDevDependencies": {
-    "jsdoc-to-markdown": [
-      "^5.0.0",
-      "jsdoc"
-    ]
   },
   "scripts": {
     "build": "browserify ./index.js -o browser/crypto.js",
     "check": "npm audit",
     "lint": "standard",
-    "prejsdoc": "optional-dev-dependency -t jsdoc",
     "jsdoc": "jsdoc2md index.js > docs/api.md",
     "test": "tape test/**/*.js"
   },
