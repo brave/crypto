@@ -4,8 +4,10 @@
 
 const assert = require('assert')
 const nacl = require('tweetnacl')
-const niceware = require('niceware')
-const bip39 = require('bip39')
+
+// Lazy-load wordlists to save memory when using bip39
+let niceware = null
+let bip39 = null
 
 /**
  * Default seed size in bytes.
@@ -191,11 +193,13 @@ module.exports.passphrase = {
    */
   fromBytesOrHex: function (bytes/* : Uint8Array | string */, useNiceware/* : boolean */ = false) {
     if (useNiceware) {
+      niceware = niceware || require('niceware')
       if (typeof bytes === 'string') {
         bytes = module.exports.hexToUint8(bytes)
       }
       return niceware.bytesToPassphrase(Buffer.from(bytes)).join(' ')
     } else {
+      bip39 = bip39 || require('bip39')
       if (typeof bytes !== 'string') {
         bytes = module.exports.uint8ToHex(bytes)
       }
@@ -214,8 +218,10 @@ module.exports.passphrase = {
     passphrase = passphrase.trim().replace(/\s+/gi, ' ')
     const words = passphrase.split(' ')
     if (words.length === module.exports.passphrase.NICEWARE_32_BYTE_WORD_COUNT) {
+      niceware = niceware || require('niceware')
       return new Uint8Array(niceware.passphraseToBytes(words))
     } else if (words.length === module.exports.passphrase.BIP39_32_BYTE_WORD_COUNT) {
+      bip39 = bip39 || require('bip39')
       return module.exports.hexToUint8(bip39.mnemonicToEntropy(passphrase))
     } else {
       throw new Error(`Input words length ${words.length} is not 24 or 16.`)
@@ -233,9 +239,11 @@ module.exports.passphrase = {
     passphrase = passphrase.trim().replace(/\s+/gi, ' ')
     const words = passphrase.split(' ')
     if (words.length === module.exports.passphrase.NICEWARE_32_BYTE_WORD_COUNT) {
+      niceware = niceware || require('niceware')
       const bytes = niceware.passphraseToBytes(words)
       return module.exports.uint8ToHex(bytes)
     } else if (words.length === module.exports.passphrase.BIP39_32_BYTE_WORD_COUNT) {
+      bip39 = bip39 || require('bip39')
       return bip39.mnemonicToEntropy(passphrase)
     } else {
       throw new Error(`Input word length ${words.length} is not 24 or 16.`)
