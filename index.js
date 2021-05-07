@@ -31,7 +31,7 @@ module.exports.hmac = function (message/* : Uint8Array */, key/* : Uint8Array */
   const BLOCK_SIZE = 128
   const HASH_SIZE = 64
   const buf = new Uint8Array(BLOCK_SIZE + Math.max(HASH_SIZE, message.length))
-  var i, innerHash
+  let i
 
   if (key.length > BLOCK_SIZE) {
     key = nacl.hash(key)
@@ -40,7 +40,7 @@ module.exports.hmac = function (message/* : Uint8Array */, key/* : Uint8Array */
   for (i = 0; i < BLOCK_SIZE; i++) buf[i] = 0x36
   for (i = 0; i < key.length; i++) buf[i] ^= key[i]
   buf.set(message, BLOCK_SIZE)
-  innerHash = nacl.hash(buf.subarray(0, BLOCK_SIZE + message.length))
+  const innerHash = nacl.hash(buf.subarray(0, BLOCK_SIZE + message.length))
 
   for (i = 0; i < BLOCK_SIZE; i++) buf[i] = 0x5c
   for (i = 0; i < key.length; i++) buf[i] ^= key[i]
@@ -70,17 +70,17 @@ module.exports.getHKDF = function (ikm/* : Uint8Array */, info/* : Uint8Array */
   if (!(salt instanceof Uint8Array) || salt.length === 0) {
     salt = new Uint8Array(hashLength)
   }
-  var prk = module.exports.hmac(ikm, salt) // Pseudorandom Key
+  const prk = module.exports.hmac(ikm, salt) // Pseudorandom Key
 
   // Expand
-  var n = Math.ceil(extractLen / hashLength)
-  var t = []
+  const n = Math.ceil(extractLen / hashLength)
+  const t = []
   t[0] = new Uint8Array()
   info = info || new Uint8Array()
-  var okm = new Uint8Array(extractLen)
+  const okm = new Uint8Array(extractLen)
 
   let filled = 0
-  for (var i = 1; i <= n; i++) {
+  for (let i = 1; i <= n; i++) {
     const prev = t[i - 1]
     const input = new Uint8Array(info.length + prev.length + 1)
     input.set(prev)
@@ -167,7 +167,7 @@ module.exports.hexToUint8 = function (hex/* : string */ = '') {
     hex = '0' + hex
   }
   const arr = new Uint8Array(hex.length / 2)
-  for (var i = 0; i < hex.length / 2; i++) {
+  for (let i = 0; i < hex.length / 2; i++) {
     arr[i] = Number('0x' + hex[2 * i] + hex[2 * i + 1])
   }
   return arr
