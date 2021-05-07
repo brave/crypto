@@ -16,14 +16,14 @@
   "devDependencies": {
     "browserify": "^16.5.0",
     "coveralls": "^3.0.9",
-    "jsdoc-to-markdown": "^6.0.1",
-    "standard": "^14.3.3",
+    "jsdoc-to-markdown": "^7.0.1",
+    "standard": "^16.0.3",
     "tape": "^4.9.0"
   },
   "scripts": {
     "build": "browserify ./index.js -o browser/crypto.js",
-    "check": "npm audit",
     "lint": "standard",
+    "lint-fix": "standard --fix",
     "jsdoc": "jsdoc2md index.js > docs/api.md",
     "test": "tape test/**/*.js"
   },
@@ -42,5 +42,9 @@
     "bip39": "^2.6.0",
     "niceware": "^1.0.7",
     "tweetnacl": "^1.0.3"
+  },
+  "resolutions": {
+    "hosted-git-info": "3.0.8",
+    "underscore": "1.12.1"
   }
 }
