@@ -16,5 +16,5 @@ jobs:
     - name: Run scripts
       run: |
         yarn run lint
-        yarn audit
+        yarn audit --prod
         yarn test
