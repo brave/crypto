@@ -15,7 +15,6 @@
   "main": "index.js",
   "devDependencies": {
     "browserify": "^16.5.0",
-    "coveralls": "^3.0.9",
     "jsdoc-to-markdown": "^7.0.1",
     "standard": "^16.0.3",
     "tape": "^4.9.0"
