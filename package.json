@@ -17,7 +17,7 @@
     "browserify": "^16.5.0",
     "jsdoc-to-markdown": "^7.0.1",
     "standard": "^16.0.3",
-    "tape": "^4.9.0"
+    "tape": "^5.0.0"
   },
   "scripts": {
     "build": "browserify ./index.js -o browser/crypto.js",
