@@ -43,7 +43,7 @@
     "tweetnacl": "^1.0.3"
   },
   "resolutions": {
-    "hosted-git-info": "3.0.8",
+    "hosted-git-info": "7.0.1",
     "underscore": "1.12.1"
   }
 }
