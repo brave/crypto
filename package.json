@@ -14,10 +14,10 @@
   "homepage": "http://www.github.com/brave/crypto",
   "main": "index.js",
   "devDependencies": {
-    "browserify": "^16.5.0",
-    "jsdoc-to-markdown": "^7.0.1",
-    "standard": "^16.0.3",
-    "tape": "^4.9.0"
+    "browserify": "16.5.2",
+    "jsdoc-to-markdown": "7.1.1",
+    "standard": "16.0.4",
+    "tape": "4.17.0"
   },
   "scripts": {
     "build": "browserify ./index.js -o browser/crypto.js",
