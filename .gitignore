@@ -39,3 +39,6 @@ jspm_packages
 testbundle.js
 browser/*.js
 yarn.lock
+
+# Generates by typescript
+*.d.ts

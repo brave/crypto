@@ -1,6 +1,6 @@
 {
   "name": "brave-crypto",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Crypto utils for Brave Browser",
   "keywords": [
     "nacl",
@@ -14,17 +14,20 @@
   "homepage": "http://www.github.com/brave/crypto",
   "main": "index.js",
   "devDependencies": {
+    "@types/node": "20.14.8",
     "browserify": "16.5.2",
     "jsdoc-to-markdown": "7.1.1",
     "standard": "16.0.4",
-    "tape": "4.17.0"
+    "tape": "4.17.0",
+    "typescript": "5.5.2"
   },
   "scripts": {
-    "build": "browserify ./index.js -o browser/crypto.js",
+    "build": "tsc && browserify index.js -o browser/crypto.js",
     "lint": "standard",
     "lint-fix": "standard --fix",
     "jsdoc": "jsdoc2md index.js > docs/api.md",
-    "test": "tape test/**/*.js"
+    "test": "tape test/**/*.js",
+    "compile": "tsc"
   },
   "standard": {
     "ignore": [
@@ -45,5 +48,6 @@
   "resolutions": {
     "hosted-git-info": "3.0.8",
     "underscore": "1.12.1"
-  }
+  },
+  "types": "index.d.ts"
 }

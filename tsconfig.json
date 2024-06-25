@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "ES6",
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": ["*.js", "**/*.ts"],
+}
