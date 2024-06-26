@@ -152,3 +152,26 @@ test('key derivation', (t) => {
   t.deepEqual(nacl.sign.open(signed, key.publicKey), null, 'verification failure')
   t.throws(crypto.deriveSigningKeysFromSeed.bind(null, []), /Uint8Array/, 'error when input is not a Uint8Array')
 })
+
+test('signing', (t) => {
+  t.plan(1)
+  const signature = crypto.https.ed25519Sign({ foo: 'bar' },
+    'primary',
+    '96aa9ec42242a9a62196281045705196a64e12b15e9160bbb630e38385b82700e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d',
+  );
+  
+  t.equal(signature, 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="')
+})
+
+test('verification', (t) => {
+  t.plan(1)
+  const verified = crypto.https.ed25519Verify(
+    {
+      foo: 'bar',
+      signature: 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="'
+    },
+    'e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d'
+  )
+  
+  t.equal(verified, true)
+})

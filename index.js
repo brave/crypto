@@ -372,7 +372,7 @@ module.exports.https = {
     )
 
     const signature = Buffer.from(sign).toString('base64')
-    return `keyId="${keyId}",algorithm="ed25519,headers="${headerKeys.join(' ')}",signature="${signature}"`
+    return `keyId="${keyId}",algorithm="ed25519",headers="${headerKeys.join(' ')}",signature="${signature}"`
   },
 
   /**
@@ -394,11 +394,9 @@ module.exports.https = {
     }, {})
 
     const message = signedRequest.headers.split(' ').map(key => `${key}: ${headers[key]}`).join('\n')
-    const signature = Buffer.from(signedRequest.signature, 'base64')
-
     return nacl.sign.detached.verify(
       Uint8Array.from(Buffer.from(message)),
-      Uint8Array.from(Buffer.from(signature, 'base64')),
+      Uint8Array.from(Buffer.from(signedRequest.signature, 'base64')),
       Uint8Array.from(Buffer.from(publicKey, 'hex'))
     )
   }
