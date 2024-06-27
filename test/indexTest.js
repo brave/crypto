@@ -182,14 +182,14 @@ test('signing', (t) => {
 })
 
 test('verification', (t) => {
-  t.plan(7)
+  t.plan(8)
   const headers = { foo: 'bar', fizz: 'buzz', signature: goodSignature }
   let verified = crypto.ed25519Verify(pair.publicKey, headers)
   t.equal(verified, true)
   
   // Miss a byte
   let testKey = pair.publicKey;
-  t.throws(crypto.ed25519Verify.bind(testKey.slice(1, 2), headers), 'header signature is required')
+  t.throws(crypto.ed25519Verify.bind(testKey.slice(0, 2), headers), 'bad public key size')
   
   // Modify a byte
   testKey = Uint8Array.from(pair.publicKey);
@@ -212,5 +212,10 @@ test('verification', (t) => {
   // Missing signature
   bad = { ...headers }
   delete bad.signature
-  t.throws(crypto.ed25519Verify.bind(pair.publicKey, headers), 'header signature is required')
+  t.throws(crypto.ed25519Verify.bind(pair.publicKey, bad), 'header signature is required')
+  
+  // Missing equal
+  const eq = { ...headers }
+  eq.signature = 'keyId="test-key-ed25519",algorithm="ed25519",headers="foo fizz",signature"lAGT9Bhde3sJp8Z1NTxmViJtG1PSoYnXV9he82z1iu//KXmCrjKYe1JOU34memKIdlxG1yJoeS2hxANRvalrBw=="'
+  t.throws(crypto.ed25519Verify.bind(pair.publicKey, bad), 'no signature was parsed')
 })

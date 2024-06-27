@@ -392,11 +392,13 @@ module.exports.ed25519Verify = function (publicKey /* string */, headers = {} /*
   if (!publicKey) throw new Error('public key is required')
   if (!headers.signature) throw new Error('header signature is required')
 
-  const signedRequest = {}
-  headers.signature.replace(
-    /(\w+)="([^"]*)",*/g,
-    (_, key, value) => { signedRequest[key] = value }
-  )
+  const signedRequest = headers.signature.split(',').reduce((result, part) => {
+    const [key, value] = part.split('=')
+    if (value) result[key] = value.replace(/"/g, '') // remove quotes
+    return result
+  }, {})
+
+  if (!headers.signature) throw new Error('no signature was parsed')
 
   const message = signedRequest.headers.split(' ').map(key => `${key}: ${headers[key]}`).join('\n')
   return nacl.sign.detached.verify(
