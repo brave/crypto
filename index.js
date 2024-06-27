@@ -356,7 +356,7 @@ module.exports.random = {
  * @param {HeaderLike} headers - headers containing the properties to sign
  * @returns {string}
  */
-module.exports.ed25519Sign = function (keyId /* string */, secretKey /* string */, headers = {} /* dictionary */) {
+module.exports.ed25519HttpSign = function (keyId /* string */, secretKey /* string */, headers = {} /* dictionary */) {
   if (!secretKey) throw new Error('secret key is required')
   if (!keyId) throw new Error('key id is required')
   if (Object.keys(headers).length === 0) throw new Error('headers are required')
@@ -388,7 +388,7 @@ module.exports.ed25519Sign = function (keyId /* string */, secretKey /* string *
  * @param {HeaderLike} headers - headers containing the signature for verification
  * @returns {boolean}
  */
-module.exports.ed25519Verify = function (publicKey /* string */, headers = {} /* dictionary */) {
+module.exports.ed25519HttpVerify = function (publicKey /* string */, headers = {} /* dictionary */) {
   if (!publicKey) throw new Error('public key is required')
   if (!headers.signature) throw new Error('header signature is required')
 
