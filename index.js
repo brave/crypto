@@ -341,63 +341,67 @@ module.exports.random = {
 }
 
 /**
- * Utils for simple signing and verification of HTTPS requests
- **/
-module.exports.https = {
-  /**
-   * Sign the `message` with the given `secretKey`.
-   *
-   * @method
-   * @param {any} headers - headers containing the properties to sign
-   * @param {string} keyId - an opaque string that the server can use to look up the component they need to validate the signature
-   * @param {string} secretKey - secret key to sign the message
-   * @returns {string}
-   */
-  ed25519Sign: function (headers /* any */, keyId /* string */, secretKey /* string */) {
-    if (!secretKey) throw new Error('secret key is required')
-    if (!keyId) throw new Error('key id is required')
-    if (JSON.stringify(headers) === '{}') throw new Error('headers are required')
+ * A dictionary of header values, i.e '{ 'header-name': 'header-value' }'
+ * @typedef {Object.<string, (string | string[] | undefined)>} HeaderLike
+ */
 
-    const headerKeys = []
-    const message = Object.entries(headers)
-      .map(([key, value]) => {
-        headerKeys.push(key)
-        return `${key}: ${value}`
-      }).join('\n')
+/**
+ * Uses Ed25519: a public-key signature system {@link https://ed25519.cr.yp.to/} {@link https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12}
+ * Signs the message using the secret key and returns a signature.
+ * @see {nacl.sign.detached}
+ *
+ * @method
+ * @param {string} keyId - an opaque string that the server can use to look up the component they need to validate the signature
+ * @param {string} secretKey - secret key to sign the message
+ * @param {HeaderLike} headers - headers containing the properties to sign
+ * @returns {string}
+ */
+module.exports.ed25519Sign = function (keyId /* string */, secretKey /* string */, headers = {} /* dictionary */) {
+  if (!secretKey) throw new Error('secret key is required')
+  if (!keyId) throw new Error('key id is required')
+  if (Object.keys(headers).length === 0) throw new Error('headers are required')
 
-    // Generate signature using the ed25519 algorithm.
-    const sign = nacl.sign.detached(
-      Uint8Array.from(Buffer.from(message)),
-      Uint8Array.from(Buffer.from(secretKey, 'hex'))
-    )
+  const headerKeys = []
+  const message = Object.entries(headers)
+    .map(([key, value]) => {
+      headerKeys.push(key)
+      return `${key}: ${value}`
+    }).join('\n')
 
-    const signature = Buffer.from(sign).toString('base64')
-    return `keyId="${keyId}",algorithm="ed25519",headers="${headerKeys.join(' ')}",signature="${signature}"`
-  },
+  // Generate signature using the ed25519 algorithm.
+  const sign = nacl.sign.detached(
+    Uint8Array.from(Buffer.from(message)),
+    Uint8Array.from(Buffer.from(secretKey, 'hex'))
+  )
 
-  /**
-   * Verify the signed `message` with the given `publicKey`.
-   *
-   * @method
-   * @param {any} headers - headers containing the signature for verification
-   * @param {string} publicKey - public key to verify the signature
-   * @returns {boolean}
-   */
-  ed25519Verify: function (headers /* any */, publicKey /* string */) {
-    if (!publicKey) throw new Error('public key is required')
-    if (!headers.signature) throw new Error('signature is required')
+  const signature = Buffer.from(sign).toString('base64')
+  return `keyId="${keyId}",algorithm="ed25519",headers="${headerKeys.join(' ')}",signature="${signature}"`
+}
 
-    const signedRequest = headers.signature.split(',').reduce((result, part) => {
-      const [key, value] = part.split('=')
-      result[key] = value.replace(/"/g, '') // remove quotes
-      return result
-    }, {})
+/**
+ * Uses Ed25519: a public-key signature system {@link https://ed25519.cr.yp.to/} {@link https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12}
+ * Verifies the signature for the message and returns true if verification succeeded or false if it failed.
+ * @see {nacl.sign.detached.verify}
+ *
+ * @method
+ * @param {string} publicKey - public key to verify the signature
+ * @param {HeaderLike} headers - headers containing the signature for verification
+ * @returns {boolean}
+ */
+module.exports.ed25519Verify = function (publicKey /* string */, headers = {} /* dictionary */) {
+  if (!publicKey) throw new Error('public key is required')
+  if (!headers.signature) throw new Error('header signature is required')
 
-    const message = signedRequest.headers.split(' ').map(key => `${key}: ${headers[key]}`).join('\n')
-    return nacl.sign.detached.verify(
-      Uint8Array.from(Buffer.from(message)),
-      Uint8Array.from(Buffer.from(signedRequest.signature, 'base64')),
-      Uint8Array.from(Buffer.from(publicKey, 'hex'))
-    )
-  }
+  const signedRequest = {}
+  headers.signature.replace(
+    /(\w+)="([^"]*)",*/g,
+    (_, key, value) => { signedRequest[key] = value }
+  )
+
+  const message = signedRequest.headers.split(' ').map(key => `${key}: ${headers[key]}`).join('\n')
+  return nacl.sign.detached.verify(
+    Uint8Array.from(Buffer.from(message)),
+    Uint8Array.from(Buffer.from(signedRequest.signature, 'base64')),
+    Uint8Array.from(Buffer.from(publicKey, 'hex'))
+  )
 }

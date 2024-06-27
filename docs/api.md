@@ -40,6 +40,22 @@ Returns a nacl.sign keypair object:
 <dt><a href="#hexToUint8">hexToUint8([hex])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Converts hex string to a Uint8Array.</p>
 </dd>
+<dt><a href="#ed25519Sign">ed25519Sign(keyId, secretKey, headers)</a> ⇒ <code>string</code></dt>
+<dd><p>Uses Ed25519: a public-key signature system <a href="https://ed25519.cr.yp.to/">https://ed25519.cr.yp.to/</a> <a href="https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12">https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12</a>
+Signs the message using the secret key and returns a signature.</p>
+</dd>
+<dt><a href="#ed25519Verify">ed25519Verify(publicKey, headers)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Uses Ed25519: a public-key signature system <a href="https://ed25519.cr.yp.to/">https://ed25519.cr.yp.to/</a> <a href="https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12">https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12</a>
+Verifies the signature for the message and returns true if verification succeeded or false if it failed.</p>
+</dd>
+</dl>
+
+## Typedefs
+
+<dl>
+<dt><a href="#HeaderLike">HeaderLike</a> : <code>Object.&lt;string, (string|Array.&lt;string&gt;|undefined)&gt;</code></dt>
+<dd><p>A dictionary of header values, i.e &#39;{ &#39;header-name&#39;: &#39;header-value&#39; }&#39;</p>
+</dd>
 </dl>
 
 <a name="passphrase"></a>
@@ -215,3 +231,38 @@ Converts hex string to a Uint8Array.
 | --- | --- | --- |
 | [hex] | <code>string</code> | Hex string to convert; defaults to ''. |
 
+<a name="ed25519Sign"></a>
+
+## ed25519Sign(keyId, secretKey, headers) ⇒ <code>string</code>
+Uses Ed25519: a public-key signature system [https://ed25519.cr.yp.to/](https://ed25519.cr.yp.to/) [https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12](https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12)
+Signs the message using the secret key and returns a signature.
+
+**Kind**: global function  
+**See**: {nacl.sign.detached}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keyId | <code>string</code> | an opaque string that the server can use to look up the component they need to validate the signature |
+| secretKey | <code>string</code> | secret key to sign the message |
+| headers | [<code>HeaderLike</code>](#HeaderLike) | headers containing the properties to sign |
+
+<a name="ed25519Verify"></a>
+
+## ed25519Verify(publicKey, headers) ⇒ <code>boolean</code>
+Uses Ed25519: a public-key signature system [https://ed25519.cr.yp.to/](https://ed25519.cr.yp.to/) [https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12](https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12)
+Verifies the signature for the message and returns true if verification succeeded or false if it failed.
+
+**Kind**: global function  
+**See**: {nacl.sign.detached.verify}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| publicKey | <code>string</code> | public key to verify the signature |
+| headers | [<code>HeaderLike</code>](#HeaderLike) | headers containing the signature for verification |
+
+<a name="HeaderLike"></a>
+
+## HeaderLike : <code>Object.&lt;string, (string\|Array.&lt;string&gt;\|undefined)&gt;</code>
+A dictionary of header values, i.e '{ 'header-name': 'header-value' }'
+
+**Kind**: global typedef  

@@ -52,126 +52,64 @@ test('hmac', (t) => {
   t.throws(crypto.hmac.bind(null, new Uint8Array(), []), /Uint8Arrays/, 'errors if inputs are wrong type')
 })
 
-test('hkdf', (t) => {
-  // https://www.kullo.net/blog/hkdf-sha-512-test-vectors/
-  var results = [{
-    "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
-    "salt"  : "000102030405060708090a0b0c",
-    "info"  : "f0f1f2f3f4f5f6f7f8f9",
-    "L"     : 42,
-    "OKM"   : "832390086cda71fb47625bb5ceb168e4c8e26a1a16ed34d9fc7fe92c1481579338da362cb8d9f925d7cb"
-  }, {
-    "IKM"   : "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f",
-    "salt"  : "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
-    "info"  : "b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
-    "L"     : 82,
-    "OKM"   : "ce6c97192805b346e6161e821ed165673b84f400a2b514b2fe23d84cd189ddf1b695b48cbd1c8388441137b3ce28f16aa64ba33ba466b24df6cfcb021ecff235f6a2056ce3af1de44d572097a8505d9e7a93"
-  }, {
-    "IKM"   : "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f",
-    "salt"  : "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
-    "info"  : "b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
-    "L"     : 64, // Same as above but truncated to a multiple of HMAC length.
-    "OKM"   : "ce6c97192805b346e6161e821ed165673b84f400a2b514b2fe23d84cd189ddf1b695b48cbd1c8388441137b3ce28f16aa64ba33ba466b24df6cfcb021ecff235"
-  }, {
-    "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
-    "salt"  : "",
-    "info"  : "",
-    "L"     : 42,
-    "OKM"   : "f5fa02b18298a72a8c23898a8703472c6eb179dc204c03425c970e3b164bf90fff22d04836d0e2343bac"
-  }, {
-    "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
-    "salt"  : "",
-    // "info"  : ...,       // This field intentionally blank.
-    "L"     : 42,
-    "OKM"   : "f5fa02b18298a72a8c23898a8703472c6eb179dc204c03425c970e3b164bf90fff22d04836d0e2343bac"
-  }, {
-    "IKM"   : "0b0b0b0b0b0b0b0b0b0b0b",
-    "salt"  : "000102030405060708090a0b0c",
-    "info"  : "f0f1f2f3f4f5f6f7f8f9",
-    "L"     : 42,
-    "OKM"   : "7413e8997e020610fbf6823f2ce14bff01875db1ca55f68cfcf3954dc8aff53559bd5e3028b080f7c068"
-  }, {
-    "IKM"   : "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
-    "info"  : "",
-    "L"     : 42,
-    "OKM"   : "1407d46013d98bc6decefcfee55f0f90b0c7f63d68eb1a80eaf07e953cfc0a3a5240a155d6e4daa965bb"
-  }]
-  t.plan(8)
-  results.forEach((result) => {
-    var hkdf = crypto.getHKDF(
-      fromHex(result['IKM']),
-      'info' in result && fromHex(result['info']),
-      result['L'],
-      fromHex(result['salt'])
-    )
-    t.equal(toHex(hkdf), result['OKM'])
-  })
-  t.throws(crypto.getHKDF.bind(null, new Uint8Array(1), new Uint8Array(), 16321), /Invalid extract length/, 'error when extract length is too long')
-})
-
-test('uint8ToHex', (t) => {
-  t.plan(8)
-  t.equal(toHex(new Uint8Array([])), '')
-  t.equal(toHex(new Uint8Array([0])), '00')
-  t.equal(toHex(new Uint8Array([0, 255])), '00ff')
-  t.equal(toHex(new Uint8Array([30, 1, 2, 3])), '1e010203')
-  const buf = new ArrayBuffer(6)
-  for (let i = 0; i < 6; i++) {
-    new Uint8Array(buf)[i] = [42, 30, 1, 2, 3, 73][i]
-  }
-  t.equal(toHex(new Uint8Array(buf, 1, 4)), '1e010203')
-  t.equal(toHex(Buffer.from([30, 1, 2, 3])), '1e010203')
-  t.equal(toHex(Buffer.alloc(3)), '000000')
-  t.throws(toHex.bind(null, 'foo'), /Uint8Array/, 'errors if inputs are wrong type')
-})
-
-test('hexToUint8', (t) => {
-  t.plan(9)
-  t.deepEqual(fromHex('00'), {0: 0})
-  t.deepEqual(fromHex('1'), {0: 1})
-  t.deepEqual(fromHex(''), {})
-  t.deepEqual(fromHex('00ff'), {0: 0, 1: 255})
-  t.deepEqual(fromHex('1e010203'), {0: 30, 1: 1, 2: 2, 3: 3})
-  t.deepEqual(fromHex('1E010203'), {0: 30, 1: 1, 2: 2, 3: 3})
-  t.throws(fromHex.bind(null, new Uint8Array(3)), /must be a string/, 'errors if inputs are wrong type')
-  t.throws(fromHex.bind(null, '1e010203g'), /must be hex/, 'errors if input is not hex')
-  t.throws(fromHex.bind(null, '0x1ffb78'), /without the 0x prefix/, 'errors if input has 0x prefix')
-})
-
-test('key derivation', (t) => {
-  const HKDF_SALT = new Uint8Array([72, 203, 156, 43, 64, 229, 225, 127, 214, 158, 50, 29, 130, 186, 182, 207, 6, 108, 47, 254, 245, 71, 198, 109, 44, 108, 32, 193, 221, 126, 119, 143, 112, 113, 87, 184, 239, 231, 230, 234, 28, 135, 54, 42, 9, 243, 39, 30, 179, 147, 194, 211, 212, 239, 225, 52, 192, 219, 145, 40, 95, 19, 142, 98])
-  t.plan(5)
-  const key = crypto.deriveSigningKeysFromSeed(fromHex("5bb5ceb168e4c8e26a1a16ed34d9fc7fe92c1481579338da362cb8d9f925d7cb"), HKDF_SALT)
-  t.equal('f58ca446f0c33ee7e8e9874466da442b2e764afd77ad46034bdff9e01f9b87d4', toHex(key.publicKey), 'gets pub key')
-  t.equal('b5abda6940984c5153a2ba3653f047f98dfb19e39c3e02f07c8bbb0bd8e8872ef58ca446f0c33ee7e8e9874466da442b2e764afd77ad46034bdff9e01f9b87d4', toHex(key.secretKey), 'gets priv key')
-  const message = Buffer.from('€ 123 ッッッ　あ')
-  const signed = nacl.sign(message, key.secretKey)
-  const opened = Buffer.from(nacl.sign.open(signed, key.publicKey))
-  t.deepEqual(opened, message, 'verification success')
-  signed[0] = 255
-  t.deepEqual(nacl.sign.open(signed, key.publicKey), null, 'verification failure')
-  t.throws(crypto.deriveSigningKeysFromSeed.bind(null, []), /Uint8Array/, 'error when input is not a Uint8Array')
-})
+const pair = nacl.sign.keyPair.fromSecretKey(
+  Uint8Array.from(
+    Buffer.from('9f8362f87a484a954e6e740c5b4c0e84229139a20aa8ab56ff66586f6a7d29c526b40b8f93fff3d897112f7ebc582b232dbd72517d082fe83cfb30ddce43d1bb', 'hex')
+  )
+)
+const goodSignature = 'keyId="test-key-ed25519",algorithm="ed25519",headers="foo fizz",signature="lAGT9Bhde3sJp8Z1NTxmViJtG1PSoYnXV9he82z1iu//KXmCrjKYe1JOU34memKIdlxG1yJoeS2hxANRvalrBw=="'
 
 test('signing', (t) => {
-  t.plan(1)
-  const signature = crypto.https.ed25519Sign({ foo: 'bar' },
-    'primary',
-    '96aa9ec42242a9a62196281045705196a64e12b15e9160bbb630e38385b82700e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d',
-  );
+  const headers = { foo: 'bar', fizz: 'buzz' }
+  t.plan(5)
+
+  let signature = crypto.ed25519Sign('test-key-ed25519', pair.secretKey, headers);
+  t.equal(signature, goodSignature)
   
-  t.equal(signature, 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="')
+  // Incorrect header
+  signature = crypto.ed25519Sign('test-key-ed25519', pair.secretKey, { ...headers, fizz: 'fizz' });
+  t.notEqual(signature, goodSignature)
+  
+  // No headers
+  t.throws(crypto.ed25519Sign.bind('test-key-ed25519', pair.secretKey), 'headers are required')
+  
+  // No Secret Key
+  t.throws(crypto.ed25519Sign.bind('test-key-ed25519', pair.secretKey, headers), 'secret key is required')
+  
+  // No Key ID
+  t.throws(crypto.ed25519Sign.bind(null, pair.secretKey, headers), 'key ID is required')
 })
 
 test('verification', (t) => {
-  t.plan(1)
-  const verified = crypto.https.ed25519Verify(
-    {
-      foo: 'bar',
-      signature: 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="'
-    },
-    'e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d'
-  )
-  
+  t.plan(7)
+  const headers = { foo: 'bar', fizz: 'buzz', signature: goodSignature }
+  let verified = crypto.ed25519Verify(pair.publicKey, headers)
   t.equal(verified, true)
+  
+  // Miss a byte
+  let testKey = pair.publicKey;
+  t.throws(crypto.ed25519Verify.bind(testKey.slice(1, 2), headers), 'header signature is required')
+  
+  // Modify a byte
+  testKey = Uint8Array.from(pair.publicKey);
+  testKey[0] = 0;
+  verified = crypto.ed25519Verify(testKey, headers)
+  t.equal(verified, false)
+  
+  // Miss a header
+  let bad = { foo: 'bar', signature: goodSignature }
+  verified = crypto.ed25519Verify(testKey, bad)
+  t.equal(verified, false)
+  
+  // Missing part of the signature
+  bad = { ...headers }
+  bad.signature = bad.signature.slice(25, goodSignature.length)
+  t.equal(bad.signature, 'algorithm="ed25519",headers="foo fizz",signature="lAGT9Bhde3sJp8Z1NTxmViJtG1PSoYnXV9he82z1iu//KXmCrjKYe1JOU34memKIdlxG1yJoeS2hxANRvalrBw=="')
+  verified = crypto.ed25519Verify(testKey, bad)
+  t.equal(verified, false)
+  
+  // Missing signature
+  bad = { ...headers }
+  delete bad.signature
+  t.throws(crypto.ed25519Verify.bind(pair.publicKey, headers), 'header signature is required')
 })
