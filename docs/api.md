@@ -40,11 +40,11 @@ Returns a nacl.sign keypair object:
 <dt><a href="#hexToUint8">hexToUint8([hex])</a> ⇒ <code>Uint8Array</code></dt>
 <dd><p>Converts hex string to a Uint8Array.</p>
 </dd>
-<dt><a href="#ed25519Sign">ed25519Sign(keyId, secretKey, headers)</a> ⇒ <code>string</code></dt>
+<dt><a href="#ed25519HttpSign">ed25519HttpSign(keyId, secretKey, headers)</a> ⇒ <code>string</code></dt>
 <dd><p>Uses Ed25519: a public-key signature system <a href="https://ed25519.cr.yp.to/">https://ed25519.cr.yp.to/</a> <a href="https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12">https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12</a>
 Signs the message using the secret key and returns a signature.</p>
 </dd>
-<dt><a href="#ed25519Verify">ed25519Verify(publicKey, headers)</a> ⇒ <code>boolean</code></dt>
+<dt><a href="#ed25519HttpVerify">ed25519HttpVerify(publicKey, headers)</a> ⇒ <code>Object</code></dt>
 <dd><p>Uses Ed25519: a public-key signature system <a href="https://ed25519.cr.yp.to/">https://ed25519.cr.yp.to/</a> <a href="https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12">https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12</a>
 Verifies the signature for the message and returns true if verification succeeded or false if it failed.</p>
 </dd>
@@ -231,9 +231,9 @@ Converts hex string to a Uint8Array.
 | --- | --- | --- |
 | [hex] | <code>string</code> | Hex string to convert; defaults to ''. |
 
-<a name="ed25519Sign"></a>
+<a name="ed25519HttpSign"></a>
 
-## ed25519Sign(keyId, secretKey, headers) ⇒ <code>string</code>
+## ed25519HttpSign(keyId, secretKey, headers) ⇒ <code>string</code>
 Uses Ed25519: a public-key signature system [https://ed25519.cr.yp.to/](https://ed25519.cr.yp.to/) [https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12](https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12)
 Signs the message using the secret key and returns a signature.
 
@@ -246,9 +246,9 @@ Signs the message using the secret key and returns a signature.
 | secretKey | <code>string</code> | hex encoded secret key to sign the message |
 | headers | [<code>HeaderLike</code>](#HeaderLike) | headers containing the properties to sign |
 
-<a name="ed25519Verify"></a>
+<a name="ed25519HttpVerify"></a>
 
-## ed25519Verify(publicKey, headers) ⇒ <code>boolean</code>
+## ed25519HttpVerify(publicKey, headers) ⇒ <code>Object</code>
 Uses Ed25519: a public-key signature system [https://ed25519.cr.yp.to/](https://ed25519.cr.yp.to/) [https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12](https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12)
 Verifies the signature for the message and returns true if verification succeeded or false if it failed.
 

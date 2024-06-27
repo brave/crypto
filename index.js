@@ -386,24 +386,39 @@ module.exports.ed25519HttpSign = function (keyId /* string */, secretKey /* stri
  * @method
  * @param {string} publicKey - hex encoded public key to verify the signature
  * @param {HeaderLike} headers - headers containing the signature for verification
- * @returns {boolean}
+ * @returns {{ algorithm: string, headers: string[], keyId: string, signature: string, verified: boolean }}
  */
 module.exports.ed25519HttpVerify = function (publicKey /* string */, headers = {} /* dictionary */) {
   if (!publicKey) throw new Error('public key is required')
   if (!headers.signature) throw new Error('header signature is required')
 
   const signedRequest = headers.signature.split(',').reduce((result, part) => {
-    const [key, value] = part.split('=')
+    const eq = part.indexOf('=')
+    const key = part.substring(0, eq)
+    const value = part.substring(eq + 1, part.length)
     if (value) result[key] = value.replace(/"/g, '') // remove quotes
     return result
   }, {})
 
-  if (!headers.signature) throw new Error('no signature was parsed')
+  if (!signedRequest.algorithm) throw new Error('no algorithm was parsed')
+  if (signedRequest.algorithm !== 'ed25519') throw new Error('unsupported algorithm, use ed25519')
+  if (!signedRequest.signature) throw new Error('no signature was parsed')
+  if (!signedRequest.keyId) throw new Error('no keyId was parsed')
+  if (!signedRequest.headers) throw new Error('no headers were parsed')
 
-  const message = signedRequest.headers.split(' ').map(key => `${key}: ${headers[key]}`).join('\n')
-  return nacl.sign.detached.verify(
+  const signedRequestHeaders = signedRequest.headers.split(' ');
+  const message = signedRequestHeaders.map(key => `${key}: ${headers[key]}`).join('\n')
+  const verified = nacl.sign.detached.verify(
     Uint8Array.from(Buffer.from(message)),
     Uint8Array.from(Buffer.from(signedRequest.signature, 'base64')),
     Uint8Array.from(Buffer.from(publicKey, 'hex'))
   )
+
+  return {
+    algorithm: signedRequest.algorithm,
+    headers: signedRequestHeaders,
+    keyId: signedRequest.keyId,
+    signature: signedRequest.signature,
+    verified
+  }
 }

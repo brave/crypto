@@ -162,7 +162,7 @@ const goodSignature = 'keyId="test-key-ed25519",algorithm="ed25519",headers="foo
 
 test('signing', (t) => {
   const headers = { foo: 'bar', fizz: 'buzz' }
-  t.plan(5)
+  t.plan(6)
   
   let signature = crypto.ed25519HttpSign('test-key-ed25519', pair.secretKey, headers);
   t.equal(signature, goodSignature)
@@ -179,35 +179,41 @@ test('signing', (t) => {
   
   // No Key ID
   t.throws(crypto.ed25519HttpSign.bind(null, pair.secretKey, headers), 'key ID is required')
+  
+  const original = crypto.ed25519HttpSign(
+    'primary', 
+    '96aa9ec42242a9a62196281045705196a64e12b15e9160bbb630e38385b82700e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d', 
+    { foo: 'bar' }
+  );
+  t.equal(original, 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="');
 })
 
 test('verification', (t) => {
-  t.plan(8)
+  t.plan(10)
   const headers = { foo: 'bar', fizz: 'buzz', signature: goodSignature }
-  let verified = crypto.ed25519HttpVerify(pair.publicKey, headers)
-  t.equal(verified, true)
+  let res = crypto.ed25519HttpVerify(pair.publicKey, headers)
+  t.equal(res.verified, true)
   
   // Miss a byte
-  let testKey = pair.publicKey;
+  let testKey = pair.publicKey
   t.throws(crypto.ed25519HttpVerify.bind(testKey.slice(0, 2), headers), 'bad public key size')
   
   // Modify a byte
-  testKey = Uint8Array.from(pair.publicKey);
-  testKey[0] = 0;
-  verified = crypto.ed25519HttpVerify(testKey, headers)
-  t.equal(verified, false)
+  testKey = Uint8Array.from(pair.publicKey)
+  testKey[0] = 0
+  res = crypto.ed25519HttpVerify(testKey, headers)
+  t.equal(res.verified, false)
   
   // Miss a header
   let bad = { foo: 'bar', signature: goodSignature }
-  verified = crypto.ed25519HttpVerify(testKey, bad)
-  t.equal(verified, false)
+  res = crypto.ed25519HttpVerify(testKey, bad)
+  t.equal(res.verified, false)
   
   // Missing part of the signature
   bad = { ...headers }
   bad.signature = bad.signature.slice(25, goodSignature.length)
   t.equal(bad.signature, 'algorithm="ed25519",headers="foo fizz",signature="lAGT9Bhde3sJp8Z1NTxmViJtG1PSoYnXV9he82z1iu//KXmCrjKYe1JOU34memKIdlxG1yJoeS2hxANRvalrBw=="')
-  verified = crypto.ed25519HttpVerify(testKey, bad)
-  t.equal(verified, false)
+  t.throws(crypto.ed25519HttpVerify.bind(pair.publicKey, bad), 'no keyId was parsed')
   
   // Missing signature
   bad = { ...headers }
@@ -217,5 +223,31 @@ test('verification', (t) => {
   // Missing equal
   const eq = { ...headers }
   eq.signature = 'keyId="test-key-ed25519",algorithm="ed25519",headers="foo fizz",signature"lAGT9Bhde3sJp8Z1NTxmViJtG1PSoYnXV9he82z1iu//KXmCrjKYe1JOU34memKIdlxG1yJoeS2hxANRvalrBw=="'
-  t.throws(crypto.ed25519HttpVerify.bind(pair.publicKey, bad), 'no signature was parsed')
+  t.throws(crypto.ed25519HttpVerify.bind(pair.publicKey, bad), 'no ed25519 signature was parsed')
+  
+  // Incorrect algorithm
+  t.throws(crypto.ed25519HttpVerify.bind(
+    'e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d',
+    {
+      foo: 'bar',
+      signature: 'keyId="primary",algorithm="foobar",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="'
+    }
+  ), 'unsupported algorithm, use ed25519')
+  
+  // Original 
+  const signature = crypto.ed25519HttpVerify(
+    'e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d',
+    {
+      foo: 'bar',
+      signature: 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="'
+    }
+  )
+  
+  t.deepEqual(signature, {
+    algorithm: 'ed25519',
+    headers: ['foo'],
+    keyId: 'primary',
+    signature: 'RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ==',
+    verified: true
+  })
 })
