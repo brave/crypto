@@ -243,7 +243,7 @@ Signs the message using the secret key and returns a signature.
 | Param | Type | Description |
 | --- | --- | --- |
 | keyId | <code>string</code> | an opaque string that the server can use to look up the component they need to validate the signature |
-| secretKey | <code>string</code> | secret key to sign the message |
+| secretKey | <code>string</code> | hex encoded secret key to sign the message |
 | headers | [<code>HeaderLike</code>](#HeaderLike) | headers containing the properties to sign |
 
 <a name="ed25519Verify"></a>
@@ -257,7 +257,7 @@ Verifies the signature for the message and returns true if verification succeede
 
 | Param | Type | Description |
 | --- | --- | --- |
-| publicKey | <code>string</code> | public key to verify the signature |
+| publicKey | <code>string</code> | hex encoded public key to verify the signature |
 | headers | [<code>HeaderLike</code>](#HeaderLike) | headers containing the signature for verification |
 
 <a name="HeaderLike"></a>

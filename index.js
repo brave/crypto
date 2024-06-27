@@ -352,7 +352,7 @@ module.exports.random = {
  *
  * @method
  * @param {string} keyId - an opaque string that the server can use to look up the component they need to validate the signature
- * @param {string} secretKey - secret key to sign the message
+ * @param {string} secretKey - hex encoded secret key to sign the message
  * @param {HeaderLike} headers - headers containing the properties to sign
  * @returns {string}
  */
@@ -384,7 +384,7 @@ module.exports.ed25519Sign = function (keyId /* string */, secretKey /* string *
  * @see {nacl.sign.detached.verify}
  *
  * @method
- * @param {string} publicKey - public key to verify the signature
+ * @param {string} publicKey - hex encoded public key to verify the signature
  * @param {HeaderLike} headers - headers containing the signature for verification
  * @returns {boolean}
  */
