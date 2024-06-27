@@ -406,7 +406,7 @@ module.exports.ed25519HttpVerify = function (publicKey /* string */, headers = {
   if (!signedRequest.keyId) throw new Error('no keyId was parsed')
   if (!signedRequest.headers) throw new Error('no headers were parsed')
 
-  const signedRequestHeaders = signedRequest.headers.split(' ');
+  const signedRequestHeaders = signedRequest.headers.split(' ')
   const message = signedRequestHeaders.map(key => `${key}: ${headers[key]}`).join('\n')
   const verified = nacl.sign.detached.verify(
     Uint8Array.from(Buffer.from(message)),
