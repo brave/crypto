@@ -1,7 +1,5 @@
 # Brave crypto utils
 
-[![Build Status](https://travis-ci.org/brave/crypto.svg?branch=master)](https://travis-ci.org/brave/crypto)
-
 Shared crypto utils for Brave browser.
 
 ## Install
