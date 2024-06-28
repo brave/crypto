@@ -29,11 +29,6 @@
     "test": "tape test/**/*.js",
     "compile": "tsc"
   },
-  "standard": {
-    "ignore": [
-      "test/*.js"
-    ]
-  },
   "author": "yan <yan@brave.com",
   "repository": {
     "type": "git",
