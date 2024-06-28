@@ -346,14 +346,14 @@ module.exports.random = {
  */
 
 /**
- * Uses Ed25519: a public-key signature system {@link https://ed25519.cr.yp.to/} {@link https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12}
+ * Uses Ed25519: a public-key signature system: {@link https://ed25519.cr.yp.to/} {@link https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12}.
  * Signs the message using the secret key and returns a signature.
- * @see {nacl.sign.detached}
+ * @see {nacl.sign.detached}.
  *
  * @method
- * @param {string} keyId - an opaque string that the server can use to look up the component they need to validate the signature
- * @param {string} secretKey - hex encoded secret key to sign the message
- * @param {HeaderLike} headers - headers containing the properties to sign
+ * @param {string} keyId - an opaque string that the server can use to look up the component they need to validate the signature.
+ * @param {string} secretKey - hex encoded secret key to sign the message.
+ * @param {HeaderLike} headers - headers containing the properties to sign.
  * @returns {string}
  */
 module.exports.ed25519HttpSign = function (keyId /* string */, secretKey /* string */, headers = {} /* dictionary */) {
@@ -379,14 +379,14 @@ module.exports.ed25519HttpSign = function (keyId /* string */, secretKey /* stri
 }
 
 /**
- * Uses Ed25519: a public-key signature system {@link https://ed25519.cr.yp.to/} {@link https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12}
- * Verifies the signature for the message and returns true if verification succeeded or false if it failed.
- * @see {nacl.sign.detached.verify}
+ * Uses Ed25519: a public-key signature system: {@link https://ed25519.cr.yp.to/} {@link https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12}.
+ * Verifies the signature for the message and returns parsed fields from the signature.
+ * @see {nacl.sign.detached.verify}.
  *
  * @method
- * @param {string} publicKey - hex encoded public key to verify the signature
- * @param {HeaderLike} headers - headers containing the signature for verification
- * @returns {{ algorithm: string, headers: string[], keyId: string, signature: string, verified: boolean }}
+ * @param {string} publicKey - hex encoded public key to verify the signature.
+ * @param {HeaderLike} headers - headers containing the signature for verification.
+ * @returns {{ algorithm: string, headers: string[], keyId: string, signature: string, verified: boolean }}.
  */
 module.exports.ed25519HttpVerify = function (publicKey /* string */, headers = {} /* dictionary */) {
   if (!publicKey) throw new Error('public key is required')

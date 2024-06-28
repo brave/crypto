@@ -164,11 +164,11 @@ test('signing', (t) => {
   const headers = { foo: 'bar', fizz: 'buzz' }
   t.plan(6)
   
-  let signature = crypto.ed25519HttpSign('test-key-ed25519', pair.secretKey, headers);
+  let signature = crypto.ed25519HttpSign('test-key-ed25519', pair.secretKey, headers)
   t.equal(signature, goodSignature)
   
   // Incorrect header
-  signature = crypto.ed25519HttpSign('test-key-ed25519', pair.secretKey, { ...headers, fizz: 'fizz' });
+  signature = crypto.ed25519HttpSign('test-key-ed25519', pair.secretKey, { ...headers, fizz: 'fizz' })
   t.notEqual(signature, goodSignature)
   
   // No headers
@@ -184,8 +184,8 @@ test('signing', (t) => {
     'primary', 
     '96aa9ec42242a9a62196281045705196a64e12b15e9160bbb630e38385b82700e7876fd5cc3a228dad634816f4ec4b80a258b2a552467e5d26f30003211bc45d', 
     { foo: 'bar' }
-  );
-  t.equal(original, 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="');
+  )
+  t.equal(original, 'keyId="primary",algorithm="ed25519",headers="foo",signature="RbGSX1MttcKCpCkq9nsPGkdJGUZsAU+0TpiXJYkwde+0ZwxEp9dXO3v17DwyGLXjv385253RdGI7URbrI7J6DQ=="')
 })
 
 test('verification', (t) => {
