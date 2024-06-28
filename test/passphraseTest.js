@@ -1,5 +1,5 @@
 const test = require('tape')
-const {passphrase} = require('../index')
+const { passphrase } = require('../index')
 const crypto = require('crypto')
 
 const array16 = [255, 255, 255, 255,

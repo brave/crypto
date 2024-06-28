@@ -215,7 +215,7 @@ for (let b = 0; b < 53 - 8; b += 8) {
   })
 }
 
-test(`bits [45..53) of uniform(2**53) pass psi test for uniform distribution`, (t) => {
+test('bits [45..53) of uniform(2**53) pass psi test for uniform distribution', (t) => {
   psiTest(t, i => (Math.floor(256 / DF) + (i < 256 % DF)) / 256, () => {
     return (0xff & Math.floor(crypto.random.uniform(2 ** 53) / (2 ** 45))) % DF
   })
