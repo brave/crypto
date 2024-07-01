@@ -5,7 +5,7 @@
     "target": "ES6",
     "allowJs": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": true
   },
-  "include": ["index.js", "random-lib.js", "**/*.ts"],
+  "include": ["index.js", "random-lib.js", "**/*.ts"]
 }
