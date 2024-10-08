@@ -13,8 +13,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
+    - name: audit
+      run: npm audit --production
+      if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     - name: Run scripts
       run: |
         npm run lint
-        npm audit --production
         npm test
