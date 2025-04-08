@@ -14,7 +14,7 @@
   "homepage": "http://www.github.com/brave/crypto",
   "main": "index.js",
   "devDependencies": {
-    "@types/node": "20.14.8",
+    "@types/node": "20.17.30",
     "browserify": "16.5.2",
     "jsdoc-to-markdown": "7.1.1",
     "standard": "16.0.4",
