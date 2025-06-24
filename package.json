@@ -1,6 +1,6 @@
 {
   "name": "brave-crypto",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Crypto utils for Brave Browser",
   "keywords": [
     "nacl",
